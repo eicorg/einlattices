@@ -1,0 +1,81 @@
+!-------------------------------------------------------
+! August 2025 update with BAR matched
+
+LTR.MAR.BEG: MARKER
+BAR.MAR.BEG: MARKER
+BAR.MAR.END: MARKER
+LTR.MAR.END: MARKER
+
+LTR.PIP01: PIPE, L = 2.5
+LTR.PIP02: PIPE, L = 1.5
+LTR.PIP03: PIPE, L = 2.3
+
+LTR.PIP04: PIPE, L = 0.3
+LTR.PIP05: PIPE, L = 21.8
+BAR.MAR.MID: MARKER, SUPERIMPOSE, REF = LTR.PIP05, OFFSET=0, REF_ORIGIN=CENTER, ELE_ORIGIN=CENTER
+LTR.PIP06: PIPE, L = 0.3
+
+LTR.PIP07: PIPE, L = 5.2+6.064+11.72
+
+LTR.QUA00: QUAD, L = 0.30
+
+LTR.QUA01: LTR.QUA00, K1 =  4.361973027, superimpose, ref = LTR.PIP01, offset=0.2, ref_origin=beginning, ele_origin=beginning	!
+LTR.QUA02: LTR.QUA00, K1 =  -1.587890151, superimpose, ref = LTR.PIP01, offset=0.7, ref_origin=beginning, ele_origin=beginning	!
+LTR.QUA03: LTR.QUA00, K1 =  -0.6530219039, superimpose, ref = LTR.PIP01, offset=1.5, ref_origin=beginning, ele_origin=beginning	!
+LTR.QUA04: LTR.QUA00, K1 =  -2.570812373, superimpose, ref = LTR.PIP01, offset=2.0, ref_origin=beginning, ele_origin=beginning	!
+
+LTR.QUA05: LTR.QUA00, K1 = 1.290598591, superimpose, ref = LTR.PIP02, offset=0.2, ref_origin=beginning, ele_origin=beginning	!
+LTR.QUA06: LTR.QUA00, K1 = 3.259656151, superimpose, ref = LTR.PIP02, offset=1.0, ref_origin=beginning, ele_origin=beginning	!
+
+LTR.QUA07: LTR.QUA00, K1 = -4.953182883, superimpose, ref = LTR.PIP03, offset=0.2, ref_origin=beginning, ele_origin=beginning
+LTR.QUA08: LTR.QUA00, K1 = 3.561972165, superimpose, ref = LTR.PIP03, offset=0.7, ref_origin=beginning, ele_origin=beginning
+LTR.QUA09: LTR.QUA00, K1 = -3.468785164, superimpose, ref = LTR.PIP03, offset=1.5, ref_origin=beginning, ele_origin=beginning
+LTR.QUA10: LTR.QUA00, K1 = 4.116425185, superimpose, ref = LTR.PIP03, offset=2.0, ref_origin=beginning, ele_origin=beginning
+
+LTR.QUA11: LTR.QUA00, K1 = 1.67260196, superimpose, ref = LTR.PIP07, offset=0.0+6.064, ref_origin=beginning, ele_origin=beginning
+LTR.QUA12: LTR.QUA00, K1 = -1.596465691, superimpose, ref = LTR.PIP07, offset=0.5+6.064, ref_origin=beginning, ele_origin=beginning
+LTR.QUA13: LTR.QUA00, K1 = 0.5502881912, superimpose, ref = LTR.PIP07, offset=1.9+6.064+11.72, ref_origin=beginning, ele_origin=beginning
+LTR.QUA14: LTR.QUA00, K1 = -0.5691837908, superimpose, ref = LTR.PIP07, offset=3.3+6.064+11.72, ref_origin=beginning, ele_origin=beginning
+LTR.QUA15: LTR.QUA00, K1 = -0.07596967789, superimpose, ref = LTR.PIP07, offset=4.7+6.064+11.72, ref_origin=beginning, ele_origin=beginning
+
+LTR.COR00: KICKER, L = 0.23
+LTR.BPM00: MONITOR, L = 0.1
+
+LTR.COR01: LTR.COR00, superimpose, ref = LTR.PIP01, offset=1.0+0.06, ref_origin=beginning, ele_origin=beginning
+LTR.BPM01: LTR.BPM00, superimpose, ref = LTR.PIP01, offset=1.0+0.06+0.28, ref_origin=beginning, ele_origin=beginning
+LTR.COR02: LTR.COR00, superimpose, ref = LTR.PIP02, offset=0.5+0.06, ref_origin=beginning, ele_origin=beginning
+LTR.BPM02: LTR.BPM00, superimpose, ref = LTR.PIP02, offset=0.5+0.06+0.28, ref_origin=beginning, ele_origin=beginning
+LTR.COR03: LTR.COR00, superimpose, ref = LTR.PIP03, offset=1.0+0.06, ref_origin=beginning, ele_origin=beginning
+LTR.BPM03: LTR.BPM00, superimpose, ref = LTR.PIP03, offset=1.0+0.06+0.28, ref_origin=beginning, ele_origin=beginning
+
+LTR.COR04: LTR.COR00, superimpose, ref = LTR.PIP05, offset=1.0+0.06, ref_origin=beginning, ele_origin=beginning
+LTR.BPM04: LTR.BPM00, superimpose, ref = LTR.PIP05, offset=1.0+0.06+0.28, ref_origin=beginning, ele_origin=beginning
+LTR.BPM05: LTR.BPM00, superimpose, ref = LTR.PIP05, offset=10.85, ref_origin=beginning, ele_origin=beginning
+LTR.COR06: LTR.COR00, superimpose, ref = LTR.PIP05, offset=20.3+0.06, ref_origin=beginning, ele_origin=beginning
+LTR.BPM06: LTR.BPM00, superimpose, ref = LTR.PIP05, offset=20.3+0.06+0.28, ref_origin=beginning, ele_origin=beginning
+
+LTR.COR07: LTR.COR00, superimpose, ref = LTR.PIP07, offset=3.0+0.06, ref_origin=beginning, ele_origin=beginning
+LTR.BPM07: LTR.BPM00, superimpose, ref = LTR.PIP07, offset=3.0+0.06+0.28, ref_origin=beginning, ele_origin=beginning
+LTR.COR08: LTR.COR00, superimpose, ref = LTR.PIP07, offset=6.864+0.06, ref_origin=beginning, ele_origin=beginning
+LTR.BPM08: LTR.BPM00, superimpose, ref = LTR.PIP07, offset=6.864+0.06+0.28, ref_origin=beginning, ele_origin=beginning
+LTR.COR09: LTR.COR00, superimpose, ref = LTR.PIP07, offset=21.384+0.06, ref_origin=beginning, ele_origin=beginning
+LTR.BPM09: LTR.BPM00, superimpose, ref = LTR.PIP07, offset=21.384+0.06+0.28, ref_origin=beginning, ele_origin=beginning
+
+
+LTR.DIP01: SBEND, L = 0.4, ANGLE = 0.07
+LTR.DIP02: SBEND, L = 0.4, ANGLE = -0.07
+
+LTR.DIP01[E1] = 0.5*0.07
+LTR.DIP01[E2] = 0.5*0.07
+LTR.DIP02[E1] = -0.5*0.07
+LTR.DIP02[E2] = -0.5*0.07
+
+
+LTR.DIP03: SBEND, L = 0.8
+
+BEFORE_D1: LINE = ( LTR.MAR.BEG, LTR.PIP01, LTR.DIP01, LTR.PIP02, LTR.DIP02, LTR.PIP03 )
+BAR_STRAIGHT: LINE = ( LTR.PIP04, BAR.MAR.BEG, LTR.PIP05, BAR.MAR.END, LTR.PIP06 )
+AFTER_D2: LINE = ( LTR.DIP03, LTR.PIP07, LTR.MAR.END )
+
+LTR_TRANSFER: LINE = ( BEFORE_D1, BAR_STRAIGHT, AFTER_D2 )
+
