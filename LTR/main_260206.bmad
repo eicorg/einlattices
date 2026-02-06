@@ -26,9 +26,7 @@ parameter[no_end_marker]          =  T
 ! Call files
 
 
-call, file = RCS_260128_ltr.bmad
-call, file = RCS_260128_il.bmad
-
+call, file = LTR_lat_260206.bmad
 
 
 LTR_COMPLETE: line = ( LTR_TRANSFER, INJ_L )
