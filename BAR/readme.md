@@ -1,0 +1,1 @@
+To properly connect the ITL/ETL survey data with the BAR survey data, you need to account for the offset between the injected/extracted beam at the end/start of the septum and the stored orbit: it's 0.036235m.
