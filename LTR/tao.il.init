@@ -1,0 +1,166 @@
+!-----------------------------------------------------------------------------------------
+! Tao
+
+&tao_start
+  n_universes = 2
+  plot_file    = '~/Documents/eic-rcs/bmad/tao/tao_plot.init '
+  startup_file = '~/Documents/eic-rcs/bmad/tao/tao.startup'
+/
+
+
+!--------------------------------------------------------
+&tao_design_lattice
+!  unique_name_suffix="*::_##?"
+    design_lattice(1)%file='RCS_251217_il.lat.bmad'
+    design_lattice(2)%file='RCS_251217_is.lat.bmad'
+!    design_lattice(2)%file='RCSV5S0.bmad'
+/
+
+
+
+&tao_params
+  !global%plot_on = T
+  global%track_type = 'single'
+  global%beam_timer_on = T
+  global%random_engine = 'pseudo' ! or: 'quasi'
+  global%de_lm_step_ratio = 1500
+  global%optimizer = 'lmdif'
+  global%n_opti_cycles = 100
+  !---Bmad---
+  bmad_com%radiation_damping_on = T
+  bmad_com%radiation_fluctuations_on = T
+/
+
+
+
+
+!-----------------------------------------------------------------------------------------
+! Beam
+
+
+&tao_beam_init
+  beam_init%n_particle = 20000
+  beam_init%random_engine = 'quasi'
+  ix_universe = 1
+  beam_saved_at =  "*"	!"MARKER::*"
+  track_start = 'inj.mar.beg'
+  !beam_init%position_file = '$COOLER/bmad/beams/in2la_modea_f39090a822b2180e8c51191242a901dd_LA.CRMOD01.MAR.END.h5'  
+  !beam_init%position_file = 'PL.CM2.MAR.END_rev1.h5'
+  !beam_init%position_file = '/a/devuser/kirstend/Documents/eic-rcs/bmad/beams/20240705_interface.txt'
+  !track_end = 'TA.Mar.END'
+  !beam_dump_file = 'beam_dump.h5'
+  !beam_dump_at = 'm_*'
+  beam_init%a_norm_emit = 29.0e-6
+  beam_init%b_norm_emit = 15.0e-6
+!  beam_init%dPz_dz = 0.0
+  beam_init%n_bunch = 1     
+  beam_init%bunch_charge = 1e-9
+  beam_init%sig_pz = 2.5e-2
+  beam_init%sig_z = 0.005
+/
+
+!-----------------------------------------------------------------------------------------
+! Data
+
+
+!--------- beam ----------
+&tao_d2_data
+        d2_data%name = 'twiss'
+        n_d1_data = 2
+/
+
+! RCS layout
+
+&tao_d1_data
+    ix_d1_data = 1
+    d1_data%name = 'floor'
+    datum( 1) =  'expression: ele::mend[floor.x]'    '' '' '' 'target' 0 1e6
+    datum( 2) =  'expression: ele::mend[floor.y]'    '' '' '' 'target' 0 1e6
+    datum( 3) =  'expression: ele::mend[floor.z]'    '' '' '' 'target' 9.4938269897362090E+01 1e6
+    datum( 4) =  'expression: ele::mend[floor.theta]'    '' '' '' 'target' 0.0000000000000000E+00 1e6
+    datum( 5) =  'expression: ele::mend[floor.phi]'    '' '' '' 'target' 0.0000000000000000E+00 1e6
+    datum( 6) =  'expression: ele::mend[floor.psi]'    '' '' '' 'target' 0.0000000000000000E+00 1e6
+    datum( 7) =  'expression: (ele::0[floor.theta] - ele::mend[floor.theta])/pi*180'    '' '' '' 'target' 9.0 1e6
+/
+
+&tao_d1_data
+    ix_d1_data = 2
+    d1_data%name = 'match'
+    datum( 1) =  'orbit.x'    '' '' 'is.mar.pt2'   'target'  0   1e3
+    datum( 2) =  'orbit.px'    '' '' 'is.mar.pt2'   'target'  0   1e3
+    datum( 3) =  'eta.a'     '' '' 'mend' 'target' -4.1030277855861378E-05 1e2
+    datum( 4) =  'etap.a'    '' '' 'mend' 'target' -7.3145970792815880E-06 1e2
+    datum( 5) =  'beta.a'     '' '' 'mend' 'target' 1.3971963321196993E+01 1e2
+    datum( 6) =  'alpha.a'    '' '' 'mend' 'target' -2.6739834263625375E+00 1e2
+    datum( 7) =  'beta.b'     '' '' 'mend' 'target' 1.6624643527644452E+00 1e2
+    datum( 8) =  'alpha.b'    '' '' 'mend' 'target' 5.4262115843033676E-01 1e2
+    datum( 9) =  'orbit.x'    '' '' 'mqa2_il'   'max'  12e-3   1e3
+    datum(10) =  'beta.a'     '' 'inj.mar.beg' 'mar.inj' 'max' 40 1e1
+    datum(11) =  'beta.b'     '' 'inj.mar.beg' 'mar.inj' 'max' 40 1e1
+/
+
+
+!-----------------------------------------------------------------------------------------
+! Variables
+
+
+&tao_var
+    v1_var%name = 'begtwiss'
+    default_step = 1e-4
+    default_universe='1'
+    ix_min_var = 1
+    ix_max_var = 9
+    var(1:9)%ele_name  = 'beginning', 'beginning', 'beginning', 'beginning', 'beginning', 'beginning', 'beginning', 'beginning', 'beginning'
+    var(1:9)%attribute = 'beta_a', 'alpha_a', 'beta_b', 'alpha_b', 'eta_x', 'etap_x', 'x_position', 'z_position', 'theta_position'
+    var(1)%low_lim = 0.01
+    var(3)%low_lim = 0.01
+/
+
+&tao_var
+    v1_var%name = 'patch'
+    default_step = 1e-4
+    ix_min_var = 1
+    ix_max_var = 2
+    var(1:2)%ele_name  = 'pat.inj', 'pat.inj'
+    var(1:2)%attribute = 'x_offset', 'x_pitch'
+/
+
+&tao_var
+    v1_var%name = 'kicker'
+    default_step = 1e-4
+    default_universe='1'
+    ix_min_var = 1
+    ix_max_var = 1
+    var(1:1)%ele_name  = 'IS.HKI01'
+    var(1:1)%attribute = 'hkick'
+/
+
+&tao_var
+    v1_var%name = 'septum'
+    default_step = 1e-4
+    default_universe='1'
+    ix_min_var = 1
+    ix_max_var = 2
+    var(1:2)%ele_name  = 'O_MG'
+    var(1:2)%attribute = 'gg'
+/
+
+&tao_var
+    v1_var%name = "quads"
+    search_for_lat_eles = "Quad ::*"
+    default_step = 1e-4
+    default_attribute = "k1"
+    default_merit_type = "limit"
+    default_low_lim = -50
+    default_high_lim = 50
+    default_weight = 1
+    ix_min_var = 1
+    default_key_delta = 1e-2
+    default_key_bound = T
+/
+
+
+
+
+
+
