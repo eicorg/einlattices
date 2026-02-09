@@ -1,0 +1,360 @@
+beam_def: Beam, Particle = Electron, Energy = 0.75, Npart = 0;
+option, -info, -echo;
+ang = -2*PI/320;
+
+/// ARC Elements
+B0: rbend, l = 1.816, angle=ang;
+QD: quadrupole, l = 0.71, k1 := kqdarc;
+QF: quadrupole, l = 0.71, k1 := kqfarc;
+SD: sextupole, l = 0.2, k2 := ksdarc;
+SF: sextupole, l = 0.2, k2 := ksfarc;
+SDS: DRIFT, l=0.2;
+SFS: DRIFT, l=0.2;
+COR: kicker, l=0.3078;
+
+
+DLO: DRIFT, l=0.09595;
+B: line=(DLO,B0,DLO);
+
+QLO: DRIFT, l=0.055;
+BPM: MONITOR, l=0.02;
+CLO: DRIFT, l= 0.0126; !0.038;
+SLO: DRIFT, l=0.05;
+DBEL: DRIFT, l=0.291064+0.0006/2;
+VACT: DRIFT, l=0.28411;
+DSQ: DRIFT, l=0.059654;
+
+
+
+ArcMain: line=(QF, QLO, BPM, CLO, COR, CLO, DBEL,B,VACT,SLO,SD,SLO,DSQ,QLO,
+QD, QLO,BPM, CLO, COR, CLO, DBEL,B,VACT,SLO,SF,SLO,DSQ,QLO);
+
+BEArcMain: line=(QF, QLO, BPM, CLO, COR, CLO, DBEL,B,VACT,SLO,SDS,SLO,DSQ,QLO,
+QD, QLO,BPM, CLO, COR, CLO, DBEL,B,VACT,SLO,SFS,SLO,DSQ,QLO);
+
+ARC: line=(BEArcMain,78*ArcMain,BEArcMain);
+
+/// Straight Section Elements
+QFSH: quadrupole, l = 0.235, k1 := kqfstr;
+QFS: quadrupole, l = 0.47, k1 := kqfstr; 
+QDS: quadrupole, l = 0.47, k1 := kqdstr;
+MQF11: quadrupole, l = 0.47, k1 :=kmqf11;
+MQF21: quadrupole, l = 0.47, k1 := kmqf21;
+
+MQD11: quadrupole, l = 0.71, k1 := kmqd11;
+MQD21: quadrupole, l = 0.71, k1 := kmqd21;
+
+
+
+mqa: drift, l = 6.86920058362181329E+000;
+mqa1: drift, l = 1.95347170119514524E+000;
+mqa2: drift, l = 4.59154633687524161E+000;
+mqa3: drift, l = 2.52291632698884705E+000;
+mqa4: drift, l = 0.453;
+mqa5: drift, l = 5.867;
+
+STRRF: drift, l = 2.207;
+RFC_D: drift, l = 1;
+
+
+MEND0: marker;
+MBEG0: marker;
+
+MEND: marker;
+MBEG: marker;
+RFC: rfcavity, l = 1, volt = 1.12, lag = 0.5, harmon = 2802;
+END: marker;
+
+! =========================================================
+! BMAD -> MAD-X (ignore apertures): implement SUPERIMPOSE
+! by splitting PIPE drifts and inserting elements.
+! =========================================================
+
+! ----- base “pipes” as drifts -----
+mqa_00:  drift, l=0.4;
+mqa_us:  drift, l=1.0;
+mqa_ds:  drift, l := mqa->l - 1.0 - 0.4;   ! non-standard pipe section (no aperture anyway)
+
+mqa1_il_a: drift, l := mqa1->l/2 - 0.4;    ! for centered 0.8 m kicker inside MQA1_IL
+mqa1_il_b: drift, l := mqa1->l/2 - 0.4;
+
+! ----- markers -----
+mar_inj: marker;
+mar_is:  marker;
+
+is_mar_pt1: marker;
+is_mar_pt2: marker;
+
+mar_sep: marker;
+mar_off: marker;
+
+! ----- kickers & marker-on-kicker -----
+is_hki01:    kicker, l=0.8;
+is_mar_hki:  marker;                       ! will be placed immediately after is_hki01 (center is same s)
+
+! ----- ES section base kicker -----
+es_hki00: kicker, l=0.8;
+es_hki01: es_hki00;
+es_hki02: es_hki00;
+es_hki03: es_hki00;
+
+! =========================================================
+! MQA1_IL with centered kicker (IS.HKI01) and marker on it
+! BMAD:
+!   IS.HKI01 superimpose on MQA1_IL at center
+!   IS.MAR.HKI superimpose on IS.HKI01 at center
+! MAD-X:
+!   split drift + insert kicker; place marker right after kicker
+! =========================================================
+mqa1_il: line=(mqa1_il_a, is_hki01, is_mar_hki, mqa1_il_b);
+
+! =========================================================
+! ES.PIP01 (L = mqa2->l) with:
+!  HKI01 start at (end - 3.6)
+!  HKI02 start at (end - 2.6)
+! => drifts: before = L-3.6 ; between = 0.2 ; after = 1.8
+! =========================================================
+es_pip01_a: drift, l := mqa2->l - 3.6;
+es_pip01_b: drift, l = 0.2;
+es_pip01_c: drift, l = 1.8;
+es_pip01:   line=(es_pip01_a, es_hki01, es_pip01_b, es_hki02, es_pip01_c);
+
+! =========================================================
+! ES.PIP02 (L = mqa1->l) with centered kicker (ES.HKI03)
+! =========================================================
+es_pip02_a: drift, l := mqa1->l/2 - 0.4;
+es_pip02_b: drift, l := mqa1->l/2 - 0.4;
+es_pip02:   line=(es_pip02_a, es_hki03, es_pip02_b);
+es_pip03: drift, l = mqa->l - 5.1;
+es_pip04: drift, l = 3.9;
+es_pip05: drift, l = 1.2;
+
+
+
+
+
+Insertion2_KD: line = ( MBEG, QF, QLO, BPM, CLO, COR, CLO, MQA_00, MAR_SEP, MQA_US, MAR_SEP, MQA_DS,
+QLO, MQD21, QLO, BPM, CLO, COR, CLO, MQA1_IL,
+QLO, MQF21, QLO, BPM, CLO, COR, CLO, MQA2,
+QLO, MQD11, QLO, BPM, CLO, COR, CLO, MQA3,
+QLO, MQF11, QLO, BPM, CLO, COR, CLO, STRRF,RFC_D,STRRF,MQA4,
+QLO, QDS,   QLO, BPM, CLO, COR, CLO, MQA5, QLO, QFS, QLO, BPM, CLO, COR, CLO, MQA5,
+QLO, QDS,   QLO, BPM, CLO, COR, CLO, MQA5, QLO);
+
+Insertion1: line = ( QFS, QLO, BPM, CLO, COR, CLO, MQA5,
+QLO, QDS,   QLO, BPM, CLO, COR, CLO, MQA5, QLO, QFS, QLO, BPM, CLO, COR, CLO, MQA5,
+QLO, QDS,   QLO, BPM, CLO, COR, CLO, MQA5,
+QLO, MQF11, QLO, BPM, CLO, COR, CLO, MQA3,
+QLO, MQD11, QLO, BPM, CLO, COR, CLO, MQA2,
+QLO, MQF21, QLO, BPM, CLO, COR, CLO, MQA1,
+QLO, MQD21, QLO, BPM, CLO, COR, CLO, MQA, QLO, MEND );
+
+InsertionRF_KD: LINE = ( MBEG, QF, QLO, BPM, CLO, COR, CLO, MQA,QLO, MQD21, QLO, BPM, CLO, COR, CLO, MQA1,QLO, MQF21, QLO,
+	BPM, CLO, COR, CLO, MQA2,QLO, MQD11, QLO, BPM, CLO, COR, CLO, MQA3,QLO, MQF11, QLO, BPM, CLO, COR, CLO, STRRF,RFC,
+	STRRF,MQA4,QLO, QDS,   QLO, BPM, CLO, COR, CLO, MQA5, QLO, QFS, QLO, BPM, CLO, COR, CLO, MQA5,QLO, QDS,   QLO, BPM, CLO,
+	COR, CLO, MQA5, QLO, QFS, QLO, BPM, CLO, COR, CLO, MQA5,QLO, QDS,   QLO, BPM, CLO, COR, CLO, MQA5, QLO, QFS, QLO, BPM,
+	CLO, COR, CLO, MQA5,QLO, QDS,   QLO, BPM, CLO, COR, CLO, MQA5,QLO, MQF11, QLO, BPM, CLO, COR, CLO, MQA3,QLO, MQD11,
+	QLO, BPM, CLO, COR, CLO, es_pip01, QLO, MQF21, QLO, BPM, CLO, COR, CLO, es_pip02, QLO, MQD21, QLO, BPM, CLO, COR, CLO, 
+	mar_off, es_pip03, mar_sep, es_pip04, mar_sep, es_pip05, QLO, MEND );
+
+//RING: line=(Insertion,ARC,InsertionRF,ARC); // begining at first straight
+//RING: line=(Insertion1,ARC,InsertionRF,ARC,Insertion2);// begining in middle of first straight
+//RING: line=(ARC,InsertionRF,ARC,Insertion2,Insertion1); // begining at first arc
+RING: line=(Insertion2_KD,Insertion1,ARC,InsertionRF_KD,ARC);
+
+// Optics for Qx=43.13 and Qy=21
+
+kqfarc = 5.31795957977410860E-001;
+kqdarc = -6.13324868051109529E-001;
+kqfstr = 4.02006151208300244E-001;
+kqdstr = -5.26509269903290389E-001;
+kmqf11 = 3.12867815468780786E-001;
+kmqd11 = -2.88139845733985767E-001;
+kmqf21 = 6.16347046154230305E-001;
+kmqd21 = -3.86072132627041043E-001;
+ksfarc = -1.31529661815748788E+001;
+ksdarc =  2.70259599202009575E+001;
+
+
+
+use, period = RING;
+twiss, chrom;
+
+//SURVEY, SEQUENCE=insertion1, FILE="insertion1.dat";
+//survey, sequence=RING, file="RING_mbeg.dat";
+
+//---------------------------------;
+
+// Optical Fitting routines
+
+/*
+USE, PERIOD=ArcMain;
+ MATCH, USE_MACRO;
+    VARY, NAME=kqfarc,  STEP = 0.00001;
+    VARY, NAME=kqdarc,  STEP = 0.00001;
+
+    B1: MACRO = { TWISS, CHROM, SEQUENCE=ArcMain; }
+    CONSTRAINT, EXPR= TABLE(SUMM,BETXMAX)<30;
+    CONSTRAINT, EXPR= TABLE(SUMM,BETYMAX)<30;
+    CONSTRAINT, EXPR = TABLE(SUMM,Q2) = 26.08/80;//27.07997883/80;
+    CONSTRAINT, EXPR = TABLE(SUMM,Q1) = 16/80;//0.275;//0.376;   // Picks the number of
+    SIMPLEX, CALLS = 5000, TOLERANCE = 1.E-12;
+   ENDMATCH;
+
+
+
+
+
+
+USE, PERIOD = ArcMain;
+   SAVEBETA, LABEL=BETA_CELL, PLACE=#E;
+   TWISS, SEQUENCE=ArcMain, CHROM, RMATRIX;
+// TWISS, SEQUENCE=ArcMain, CHROM, RMATRIX;
+//PLOT, HAXIS, VAXIS1=BETX,BETY,VAXIS2=DX,HAXIS=S,COLOUR=100,INTERPOLATE=TRUE,
+// TABLE=twiss,TITLE="Arc Cell";
+
+//stop;
+
+
+//stop;
+
+
+USE, PERIOD =  InsertionRF ;
+MATCH, USE_MACRO;
+VARY, NAME=KQFstr, STEP=0.00001;
+VARY, NAME=KQDstr, STEP=0.00001;
+VARY, NAME=KMQF11, STEP=0.00001;
+VARY, NAME=KMQD11, STEP=0.00001;
+VARY, NAME=KMQF21, STEP=0.00001;
+VARY, NAME=KMQD21, STEP=0.00001;
+
+//B1: MACRO = {USE, PERIOD = acell; 
+//SAVEBETA, LABEL=BETA_CELL, PLACE=#E;
+//TWISS,CHROM, SEQUENCE=acell;
+//}
+
+B2: MACRO = {USE, PERIOD = Insertion; TWISS,CHROM, SEQUENCE= Insertion, BETA0=BETA_CELL;}
+
+
+CONSTRAINT, WEIGHT=10.0, EXPR= TABLE(TWISS, MEND, ALFX)=BETA_CELL->ALFX;
+CONSTRAINT, EXPR= TABLE(TWISS, MEND, BETX)=BETA_CELL->BETX;
+CONSTRAINT, WEIGHT=10.0, EXPR= TABLE(TWISS, MEND, ALFY)=BETA_CELL->ALFY;
+CONSTRAINT, EXPR= TABLE(TWISS, MEND, BETY)=BETA_CELL->BETY;
+
+//CONSTRAINT, WEIGHT=100.0, EXPR= TABLE(TWISS, mbeg, DPX)=0.0;
+//CONSTRAINT, WEIGHT=100.0, EXPR= TABLE(TWISS, mbeg, DX)=0.0;
+      CONSTRAINT, EXPR= TABLE(SUMM, DXMAX) < .5;
+      CONSTRAINT, EXPR= TABLE(SUMM,BETXMAX)<26;
+      CONSTRAINT, EXPR= TABLE(SUMM,BETYMAX)<27;
+      
+
+ CONSTRAINT, WEIGHT=1000.0, EXPR=TABLE(TWISS,MEND,MUY)-TABLE(TWISS,MBEG,MUY)=2.0;
+ CONSTRAINT, WEIGHT=1000.0, EXPR=TABLE(TWISS,MEND,MUX)-TABLE(TWISS,MBEG,MUX)=1.55998;
+//SIMPLEX, CALLS = 5000, TOLERANCE = 1.E-12;
+//SIMPLEX, CALLS = 5000, TOLERANCE = 1.E-12;
+//SIMPLEX, CALLS = 5000, TOLERANCE = 1.E-12;
+lmdif, calls=5000, tolerance=1.E-12;
+   ENDMATCH;
+
+USE, PERIOD = Insertion; TWISS,CHROM, SEQUENCE= Insertion, BETA0=BETA_CELL;
+
+//stop;
+
+
+USE, PERIOD=RING;
+
+MATCH, USE_MACRO;
+      VARY, NAME=KSFarc, STEP = 0.00001;
+      VARY, NAME=KSDarc, STEP = 0.00001;
+     // VARY, NAME=KSFstr, STEP = 0.00001;
+     // VARY, NAME=KSDstr, STEP = 0.00001;
+
+      B5: MACRO = { TWISS, CHROM, SEQUENCE=RING;}
+
+      // Setting the chromaticities.
+      CONSTRAINT, WEIGHT=1000.0, EXPR= TABLE(SUMM, DQ1) =1;
+      CONSTRAINT, WEIGHT=1000.0, EXPR= TABLE(SUMM, DQ2) =1;
+      lmdif, calls=5000, tolerance=1.E-12;
+    //  SIMPLEX, CALLS = 5000, TOLERANCE = 1.E-12;
+   ENDMATCH;
+   
+*/
+
+USE, PERIOD=ring;
+//TWISS, SEQUENCE=RING, CHROM, RMATRIX;
+//PLOT, HAXIS, HMIN=723,HMAX=880, VAXIS1=BETX,BETY,VAXIS2=DX,HAXIS=S,COLOUR=100,INTERPOLATE=TRUE, TABLE=twiss,TITLE="Straight";
+//stop;
+
+//EOPTION, SEED = 99, ADD=FALSE;
+//SELECT, FLAG = ERROR, CLASS = rbend;
+//EALIGN,  DPSI:=4.0e-4*TGAUSS(2);
+select, flag=my_model, column=name,keyword,s,l,angle,betx,alfx,bety,alfy,muy,y,k1l,k2l,h1,h2,x,px,py,DX;
+
+
+//select, flag=my_model, column=name,keyword,s,l,betx,alfx,bety,alfy,DX,MUX;
+SAVEBETA, LABEL=BETA_CELL2, PLACE=#E;
+twiss, chrom, sequence=ring, table=my_model, file="RCSV5S1.twiss";
+
+value,   KQFarc,   KQDarc, KQFstr, KQDstr, KMQF11, KMQD11, KMQF21, KMQD21, KSFarc, KSDarc;
+value, table(my_model,mend,muy)-table(my_model,mbeg,muy);
+value, table(my_model,mend,mux)-table(my_model,mbeg,mux);
+Qy0 = TABLE(SUMM,Q2);
+Qx0 = TABLE(SUMM,Q1);
+CHx0 = TABLE(SUMM,DQ1);
+CHy0 = TABLE(SUMM,DQ2);
+survey, sequence=RING, file="RCSV5S1_survey.dat";
+save, sequence=ring, file="RCSV5S1.seq";
+stop;
+
+system, "rm blue.twiss";
+system, "rm stream";
+yrms = 0;
+iseed = 36;
+i=1;
+value,i;
+while(i < 100){
+j = i*iseed+4;
+USE, sequence= ring;
+EOPTION, SEED = j, ADD=FALSE;
+SELECT, FLAG = ERROR, CLASS = rbend;
+SELECT, FLAG = ERROR, CLASS = quadrupole;
+EALIGN, DX := 1.0e-4*TGAUSS(2), DY:= 2.0e-4*TGAUSS(2), DPSI:=2.0e-4*TGAUSS(2);
+//EFCOMP,	ORDER=1, RADIUS=1,	DKN={	0, 2.5e-2*TGAUSS(2.5), 0, 0, 0, 0, 0, 0, 0, 0,			0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+
+//apply corrections
+twiss, chrom, sequence=ring, table=my_model, file="blue.twiss";
+CORRECT, PLANE = y, MODE= svd;
+twiss, chrom, sequence=ring, table=my_model, file="blue.twiss";
+ CORRECT, PLANE = x, MODE= svd;
+//twiss, chrom, sequence=ring, table=my_model, file="blue.twiss";
+
+//apply corrections
+twiss, chrom, sequence=ring, table=my_model, file="blue.twiss";
+ CORRECT, PLANE = y, MODE= svd;
+ twiss, chrom, sequence=ring, table=my_model, file="blue.twiss";
+ CORRECT, PLANE = x, MODE= svd;
+twiss, chrom, sequence=ring, table=my_model, file="blue.twiss";
+
+select,  flag=my_model, column=name,keyword,s,l,angle,betx,alfx,bety,alfy,muy,y,k1l,k2l,h1,h2,x,px,py,DX;
+twiss, chrom, sequence=RING, table=my_model, file="blue.twiss";
+yrms = TABLE(SUMM,ycorms);
+ymax = TABLE(SUMM,ycomax);
+beta1 = TABLE(my_model, MEND, BETY);
+value, beta1;
+value, yrms;
+value, ymax;
+value, j;
+if( beta1 >1.0e-10){
+print, text="TWISS suceeded";
+ASSIGN, echo="Qx43Qy56p12_2p0em4R2p0em4C.dat";
+printf, text="seed=%f Y rms=%f and Ymax=%f",value= j, TABLE(SUMM,ycorms)*1000,TABLE(SUMM,ycomax)*1000;
+ASSIGN, echo=STREAM;
+system, "rm Imp.dat";
+system, "./a.out";
+system, "rm blue.twiss";
+system, "python CalRCSImpPol_18GeV.py Imp.dat >> Qx43Qy56p12_2p0em4R2p0em4C.dat";
+i = i+1;
+}ELSE{ iseed = iseed + 1; print, text="TWISS failed iterating iseed";}
+value,i, iseed, yrms,j;
+yrms = 0;
+ };
