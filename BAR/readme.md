@@ -1,5 +1,5 @@
 
-# Beam Accumulator Ring (BAR) Design Updates (V8 2026-02-05)
+# Beam Accumulator Ring (BAR) Design Updates
 
 ## Changes Relative to V5/V6
 
@@ -52,7 +52,14 @@
   - Two correctors per straight
   - Removed two correctors at the **10 and 2 o’clock** locations
 
-- Moved one **SD sextupole** from **4 o’clock** to **2 o’clock**.
+- First, moved one **SD sextupole** from **4 o’clock** to **2 o’clock**.
+- 2026-02-09 --- did a mirror reflection of SDs around the vertical (X) axis.
+  This will allow to place a flag at the 2 o'clock location which has a small betax and large dispersion.
+  Energy spread-dominated beam size.
+  I believe this is also better, because the injected beam still has large amplitude at 2 o'clock,
+  so the kick from the sextupole was at large amplitude. Removing the sextupole from 2 o'clock and placing it at
+  10 o'clock is better. At 10 o'clock, the injected beam's amplitude will be smaller.
+  I also had to move BPMs because of that.
 
 - This improved:
   - **DA** by ~**50%**
