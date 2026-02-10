@@ -34,12 +34,15 @@
 - Matched the reference-trajectory angle of the injected beam to the actual slope of the injection bump.
 
 - As a result, the beam leaving the septum during **injection** is at  
-  **1.66e-3 rad** relative to the stored orbit.
+  **1.75e-3 rad** relative to the stored orbit.
 
 - The same applies to the **extracted beam**.
 
 - Updated the **D1/D2 bend angle** to:  
-  `0.120 + 1.66e-3 rad`
+  `0.120 + 1.75e-3 rad`
+
+- The injection bump slope actually is not exactly 1.75mrad, it's more like 1.73mrad, but I want to fix the D1/D2 at 121.75mrad and the injected beam slope
+  at 1.75mrad moving forward. We will neglect small injection bump slope changes from now on (e.g., around +-0.1mrad).   
 
 ### Kicker Configuration
 - Revised the extraction kicker scheme: the extraction bump now starts from **BIUF3**, allowing a reduced kick in **BIUF1**.
