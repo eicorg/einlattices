@@ -82,19 +82,18 @@ end: marker
 !rfc[voltage] = 1.12e6*18
 
 
-MQA_US: PIPE, L = 1.4, aperture_type = elliptical, aperture = 18.16e-3
-MQA_DS: PIPE, L = MQA[L] - MQA_US[L]	! DO NOT ADD APERTURE HERE, NON STANDARD PIPE
+ltr_pip11: PIPE, L = 1.4, aperture_type = elliptical, aperture = 18.16e-3
+ltr_pip12: PIPE, L = MQA[L] - ltr_pip11[L]	! DO NOT ADD APERTURE HERE, NON STANDARD PIPE
 
-MAR.INJ: MARKER
-MAR.IS: MARKER
+ltr_mark63: MARKER
 
-MQA1_IL: PIPE, L = MQA1[L], aperture_type = elliptical, aperture = 18.16e-3
+ltr_pip13: PIPE, L = MQA1[L], aperture_type = elliptical, aperture = 18.16e-3
 
-IS.HKI01: kicker, l = 0.25, superimpose, ref = MQA1_IL, offset=0, ref_origin=center, ele_origin=center
-IS.MAR.HKI: marker, superimpose, ref = IS.HKI01, offset=0.0, ref_origin=center, ele_origin=center
+ltr_thv71: kicker, l = 0.25, superimpose, ref = ltr_pip13, offset=0, ref_origin=center, ele_origin=center
+ltr_mark71: marker, superimpose, ref = ltr_thv71, offset=0.0, ref_origin=center, ele_origin=center
 
-IS.MAR.PT1: MARKER
-IS.MAR.PT2: MARKER
+ltr_mark77: MARKER
+ltr_mark81: MARKER
 
 
 !---------------------------------;
@@ -133,11 +132,11 @@ InsertionRF: line = (MBEG, QF, QLO, BPM, CLO, COR, CLO, MQA,QLO, MQD21, QLO, BPM
 !RING: line=(Insertion1,ARC,InsertionRF,ARC,Insertion2)
 
 RING_US: LINE = ( CLO, COR, CLO, DBEL,B,VACT,
-	SLO,SFS,SLO,DSQ,QLO, MBEG, QF, QLO, BPM, CLO, COR, CLO, MQA_US )
+	SLO,SFS,SLO,DSQ,QLO, MBEG, QF, QLO, BPM, CLO, COR, CLO, ltr_pip11 )
 
-RING_DS: LINE = ( MAR.INJ, MQA_DS, QLO, MQD21, QLO, BPM, CLO, COR, CLO, MQA1_IL,
-	QLO, MQF21, QLO, BPM, CLO, COR, CLO, MQA2, IS.MAR.PT1, 
-	QLO, MQD11, QLO, BPM, CLO, COR, CLO, MQA3, IS.MAR.PT2, 
+RING_DS: LINE = ( ltr_mark63, ltr_pip12, QLO, MQD21, QLO, BPM, CLO, COR, CLO, ltr_pip13,
+	QLO, MQF21, QLO, BPM, CLO, COR, CLO, MQA2, ltr_mark77, 
+	QLO, MQD11, QLO, BPM, CLO, COR, CLO, MQA3, ltr_mark81, 
 	QLO, MQF11, QLO, BPM, CLO, COR, CLO, STRRF,RFC_D,STRRF,MQA4,
 	QLO, QDS,   QLO, BPM, CLO, COR, CLO, MQA5, QLO, QFS, QLO, BPM, CLO, COR, CLO, MQA5,
 	QLO, QDS,   QLO, BPM, CLO, COR, CLO, MQA5, QLO, QFSH0, 
