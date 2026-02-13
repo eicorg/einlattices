@@ -1,0 +1,35 @@
+no_digested
+
+parameter[geometry] = Open            
+
+parameter[p0c]                      = 7.49999825920029E8
+parameter[particle]                 = Electron
+parameter[no_end_marker]          =  T
+
+ BEGINNING[BETA_A] =  9.06696
+ BEGINNING[ALPHA_A] =  -0.587814
+ BEGINNING[BETA_B] =  20.3877
+ BEGINNING[ALPHA_B] =  -0.747937
+
+ BEGINNING[eta_x] =  0.0165
+ BEGINNING[etap_x] = -0.011
+
+ BEGINNING[eta_y] = 0.0
+ BEGINNING[etap_y] =  0.0
+
+ BEGINNING[X_POSITION] = -9.14836487492306638E+000
+ BEGINNING[Z_POSITION] = -6.04605942699758572E+001
+ BEGINNING[THETA_POSITION] =  1.57101307179584787E-001
+
+
+!-------------------------------------------------------
+! Call files
+
+
+call, file = LTR_lat_260206.bmad
+
+
+LTR_COMPLETE: line = ( LTR_TRANSFER, INJ_L )
+
+
+use, LTR_COMPLETE
