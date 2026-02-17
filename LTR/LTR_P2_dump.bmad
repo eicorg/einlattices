@@ -1,0 +1,43 @@
+!-------------------------------------------------------
+! Call files
+
+call, file = beam_BAR.bmad
+!call, file = RCS_lattice.bmad
+
+!--------------------------------------------------------------------------------
+!LTR
+
+!ltr segments
+ltr_dump_pip: PIPE, L = 3.605158
+
+!elements
+ltr_qua00: Quadrupole, L = 0.30, aperture = 0.01816, aperture_type = Elliptical
+ltr_cor00: KICKER, L = 0.23
+ltr_cor00_s: KICKER, L = 0.11 !short corrector
+ltr_bpm00: MONITOR, L = 0.1
+
+
+
+
+!ltr quads
+!dump quads
+ltr_dump_qua01: ltr_qua00, K1 = 0.4730502544, superimpose, ref = ltr_dump_pip, offset=1.15, ref_origin=beginning, ele_origin=beginning
+ltr_dump_qua02: ltr_qua00, K1 = -4.62270334, superimpose, ref = ltr_dump_pip, offset=1.65, ref_origin=beginning, ele_origin=beginning
+ltr_dump_qua03: ltr_qua00, K1 = 5.963940341, superimpose, ref = ltr_dump_pip, offset=2.15, ref_origin=beginning, ele_origin=beginning
+
+
+
+!ltr bpm
+ltr_dump_bpm01: ltr_bpm00, superimpose, ref = ltr_dump_pip, offset=3.4, ref_origin=beginning, ele_origin=beginning
+
+!ltr dipoles
+ltr_dip03: RBEND, L = 0.8, ANGLE = 0.37, ref_tilt=pi/2
+
+
+
+section_dump: LINE = (ltr_dip03, ltr_dump_pip) ! to the dump!!!
+
+
+LTR_DUMP: line = (section_dump )
+
+use, LTR_DUMP
