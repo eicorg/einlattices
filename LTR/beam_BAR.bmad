@@ -1,0 +1,20 @@
+parameter[geometry] = Open            
+
+parameter[p0c]                      = 7.49999825920029E8
+parameter[particle]                 = Electron
+parameter[no_end_marker]          =  T
+
+BEGINNING[BETA_A] =  16.2830230759
+BEGINNING[ALPHA_A] =  -1.6292746245
+BEGINNING[BETA_B] =  21.8544100000
+BEGINNING[ALPHA_B] =  -1.0731900000
+
+BEGINNING[eta_x] =  0.0
+BEGINNING[etap_x] = 0.0
+
+BEGINNING[eta_y] = 0.0
+BEGINNING[etap_y] =  0.0
+
+!BEGINNING[X_POSITION] = -9.14836487492306638E+000
+!BEGINNING[Z_POSITION] = -6.04605942699758572E+001
+!BEGINNING[THETA_POSITION] =  1.57101307179584787E-001
