@@ -1,6 +1,9 @@
 
 # Beam Accumulator Ring (BAR) Design Updates
 
+## Changes in V9 on 2026-02-17
+- Switched to new RF cavity: 49.25311707MHz and h=6; V=100kV.
+
 ## Changes Relative to V5/V6
 
 ### Orbit and Geometry
