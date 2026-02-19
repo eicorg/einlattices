@@ -7,7 +7,11 @@ call, file = beam_BAR.bmad
 !--------------------------------------------------------------------------------
 !LTR
 
+!markers
+ltr_mark_p2: MARKER
+
 !ltr segments
+ltr_pip06: PIPE, L = 0.3 !P2
 ltr_dump_pip: PIPE, L = 3.605158
 
 !elements
