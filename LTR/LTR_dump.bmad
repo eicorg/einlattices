@@ -71,7 +71,7 @@ ltr_dip03: RBEND, L = 0.8, ANGLE = 0.37, ref_tilt=pi/2
 
 section_1: LINE = ( ltr_mark_beg, ltr_pip01, ltr_dip01, ltr_pip02, ltr_dip02, ltr_pip03, ltr_pip04, ltr_mark_p1 ) !preinjector to P1
 section_2: LINE = ( ltr_pip05 )	!P1 to P2
-section_dump: LINE = (ltr_dip03, ltr_dump_pip) ! to the dump!!!
+section_dump: LINE = (ltr_mark_p2, ltr_pip06, ltr_dip03, ltr_dump_pip) ! to the dump!!!
 
 
 LTR_DUMP: line = ( section_1, section_2, section_dump )

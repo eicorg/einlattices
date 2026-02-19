@@ -35,7 +35,7 @@ ltr_dip03: RBEND, L = 0.8, ANGLE = 0.37, ref_tilt=pi/2
 
 
 
-section_dump: LINE = (ltr_dip03, ltr_dump_pip) ! to the dump!!!
+section_dump: LINE = (ltr_mark_p2, ltr_pip06, ltr_dip03, ltr_dump_pip) ! to the dump!!!
 
 
 LTR_DUMP: line = (section_dump )
