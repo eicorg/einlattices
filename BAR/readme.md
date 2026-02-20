@@ -1,6 +1,9 @@
 
 # Beam Accumulator Ring (BAR) Design Updates
 
+## Change in V9 on 2026-02-20
+- Changed RF voltage to 155kV to be in agreement with the cost estimate submitted to EIC for Director's review.
+
 ## Changes in V9 on 2026-02-17
 - Switched to new RF cavity: 49.25311707MHz and h=6; V=100kV.
 
