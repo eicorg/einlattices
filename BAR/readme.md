@@ -1,6 +1,9 @@
 
 # Beam Accumulator Ring (BAR) Design Updates
 
+## Change on 2026-04-30
+- Added ITL_parameters_table.csv and ETL_parameters_table.csv
+
 ## Change in V9.2 on 2026-04-21
 - Switched back to 98MHz, h=12, and RF Cavity voltage V=100kV
 - Added BAR_parameters_table.csv per Yi-Kai's request
