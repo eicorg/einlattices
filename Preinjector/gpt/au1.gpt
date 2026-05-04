@@ -1,0 +1,206 @@
+#-----------------------------------------------------------------------
+# EIC 320 keV DC gun with Wien Filter
+# Quad focusing in triplet config. are used before and in between the Wiens
+# 1.7nC bunch charge, 450 ps considered
+# np = 5000
+# Wien filter = 0 
+# ----------------------------------------------------------------------
+GPTLICENSE = 1233690964;
+
+R=5.8e-3;  
+
+np=5000;
+#np =1;
+Qtot = -1.7e-9;
+
+gs = 2.00231930436256 ;
+
+tlen = 0.45e-9;
+
+#-----------------------------
+# start intial beam
+#setparticles("beam", np, me, qe, Qtot, gs); #for spin tracking
+setparticles("beam", np, me, qe, Qtot);
+setrxydist("beam", "u", R/2, R);
+setphidist("beam","u",0, 2*pi);
+settdist("beam", "u", 0, tlen);
+
+
+#setspinxdist("beam","u",0,0) ;
+#setspinydist("beam","u",0,0) ;
+#setspinzdist("beam","u",1,0) ;
+
+ mc2 = me*c*c/abs(qe);
+    KE = 0.4;
+    G  = 1+KE/mc2 ;
+    setGdist( "beam", "u", G, 0);
+	
+	
+ kT = 0.01;
+    sigmagb = sqrt(kT/mc2);
+    en = (R/2)*sigmagb;
+    setGBxdist("beam","g",0,sigmagb,3,3);
+    setGBydist("beam","g",0,sigmagb,3,3);
+
+
+#xoffset=0.000;  
+#yoffset=0.000;
+#setxoffset("beam", xoffset);
+#setyoffset("beam", yoffset);	
+
+	
+#-------------------------------------------------
+#Space charge parameter
+#-------------------------------------------------
+space_charge = 1;
+space_charge_type = 1;
+Alpha  = 1;   # 1.2    (manual default is 1.0), (bigger is better)
+Fn     = 0.25;  # 0.25   (manual default is 0.5), (smaller is better)
+verror = 0.01; # 0.005  (manual default is 0.01), (smaller is better)
+Nstd   = 5;    # 12     (manual default is 5), (bigger is better)
+
+if (space_charge == 1) {
+     if (space_charge_type == 0) {
+     setcharge2Dcircle("beam", total_charge);
+         spacecharge2Dcircle();
+     }
+     if (space_charge_type == 1) {
+         spacecharge3Dmesh("Cathode", "MeshNfac", Alpha, "MeshAdapt", Fn, "SolverAcc", verror, "MeshBoxSize", Nstd);
+     }
+ }
+
+dosave=2;
+
+
+#------------------------------------------------------------------------
+# ACCURACY AND INTEGRATION PARAMETERS
+#--------------------------------------------------------------------------
+RadiusMax = 0.04;
+GBacc =  5.5;
+xacc  =  6.5;
+accuracy(GBacc, xacc) ;  # (6,6,6) does not help, neither (7,7,6)
+
+#--------------------------------------------------------------------------
+
+#-----------------------------------------------------------------------
+# ELEMENTS:
+#-------------:----------------------------------------------------------
+gun_voltage= 320;
+Zdcgun = -0.0745; #from 13.44->50
+#Zdcgun = 0;
+Maxdcgun  = 350.0;
+Edcgun    = gun_voltage / Maxdcgun;
+
+
+Map2D_E("wcs", "z", Zdcgun, "18.gdf", "R", "Z", "Er", "Ez", Edcgun);
+
+
+# solenoid field from "Wang solenoid field" directory
+map2D_B("wcs", "z", 0.357 , "sol_ew.gdf", "R", "Z", "Br", "Bz", 0.235); 
+map2D_B("wcs", "z", 0.967 , "sol_ew.gdf", "R", "Z", "Br", "Bz", 0.175); 
+
+
+Angle = 16;
+Arc_length = 0.200651;
+Rbend = Arc_length/(2*3.1416*Angle/360);
+Gamma = 1.62622;
+Beta = 0.788588;
+c = 3e8;
+em = 1.7588e11;
+Bfield = Gamma*Beta*c/(em*Rbend);
+
+  
+phiin=Angle/4 ; # Entrance pole face [degrees] # ATF, its 45
+phiout=Angle/4 ; # Exit pole face [degrees]    # ATF, its 45
+dl=0 ; # Field extends, play this
+b1=0 ; # b1=2/gap, b1=33 for 60 mm gap, b1=20, for 100mm gap
+b2=0 ; # No second order effects
+
+
+
+ccs("wcs" , 0, 0, 1.247, cos(Angle/deg), 0, -sin(Angle/deg), 0, 1, 0, "bend") ;     #it start at wcs, and its name is bend
+sectormagnet("wcs" ,"bend" , Rbend, Bfield, phiin/deg, phiout/deg, dl, b1, b2);
+
+map2D_B("bend", "z", 0.5, "sol_ew.gdf", "R", "Z", "Br", "Bz", 0.175); #a single solenoid for the diagostic line, when wien_filter = 0;
+
+#ccs("wcs" , 0, 0, 1.247, 1, 0, 0, 0, 1.247, 0, "bend") ;     #it start at wcs, and its name is bend
+#sectormagnet("wcs" ,"bend" , Rbend, Bfield, phiin/deg,phiout/deg, dl, b1, b2);
+wien_filter = 0;
+#wien_filter = 1;
+
+
+if (wien_filter ==1){
+#------------------------------------------------------------
+#Quad focusing + Wien -1 + Quad focusing + Wien -2 + solenoid
+#------------------------------------------------------------
+
+#quadrupole( "bend","z", 0.38, 0.02, 0.40125 ) ;
+#quadrupole( "bend","z", 0.42, 0.02, -0.83475 ) ;
+#quadrupole( "bend","z", 0.46, 0.02, +0.40125) ;
+
+#---- Triplet Focusing----- 1.667
+Map3D_B("bend", "z", 0.42, "quad_2cm_41.gdf", "X", "Y", "Z", "Bx", "By", "Bz", 4.20);
+Map3D_B("bend", "z", 0.46, "quad_2cm_41.gdf", "X", "Y", "Z", "Bx", "By", "Bz", -8.14 + deltaq);
+Map3D_B("bend", "z", 0.50, "quad_2cm_41.gdf", "X", "Y", "Z", "Bx", "By", "Bz", 4.20);
+
+
+#--- Wien -1  ---------------2.127
+Map3D_E("bend", "z", 0.88, "E_wf_2.gdf", "X", "Y", "Z", "Ex", "Ey", "Ez", Efactor);
+Map3D_B("bend", "z", 0.88, "B_wf_2.gdf", "X", "Y", "Z", "Bx", "By", "Bz", 0.974);
+
+#quadrupole( "bend","z", 1.22, 0.02, 0.597 ) ;
+#quadrupole( "bend","z", 1.26, 0.02, -1.2375 ) ;
+#quadrupole( "bend","z", 1.30, 0.02, +0.597 ) ;
+
+
+#---- Triplet Focusing-----248.7
+Map3D_B("bend", "z", 1.24, "quad_2cm_41.gdf", "X", "Y", "Z", "Bx", "By", "Bz", 4.15);
+Map3D_B("bend", "z", 1.28, "quad_2cm_41.gdf", "X", "Y", "Z", "Bx", "By", "Bz", -8.12 + deltaq);
+Map3D_B("bend", "z", 1.32, "quad_2cm_41.gdf", "X", "Y", "Z", "Bx", "By", "Bz", 4.15);
+
+
+#barmagnet("bend", "z", 1.28, 0.1, 0.1, 0.1, Exfield) ;
+
+
+
+#--- Wien -2  ---------------2.947
+Map3D_E("bend", "z", 1.7, "E_wf_2.gdf", "X", "Y", "Z", "Ex", "Ey", "Ez", Efactor);
+Map3D_B("bend", "z", 1.7, "B_wf_2.gdf", "X", "Y", "Z", "Bx", "By", "Bz", 0.974);
+
+
+#---- Triplet Focusing  [Wien - On]  ------ 5.42, 10.82
+#Map3D_B("bend", "z", 2.06, "quad_2cm_41.gdf", "X", "Y", "Z", "Bx", "By", "Bz", 5.41);
+#Map3D_B("bend", "z", 2.10, "quad_2cm_41.gdf", "X", "Y", "Z", "Bx", "By", "Bz", -10.82 + deltaq);
+#Map3D_B("bend", "z", 2.14, "quad_2cm_41.gdf", "X", "Y", "Z", "Bx", "By", "Bz", 5.41);
+
+
+#quadrupole( "bend","z", 2.06, 0.02, 0.37 ) ;
+#quadrupole( "bend","z", 2.10, 0.02, -0.745 ) ;
+#quadrupole( "bend","z", 2.14, 0.02, +0.37 ) ;
+
+map2D_B("bend", "z", 2.20 , "SolFGFG_ew_cw.gdf", "R", "Z", "Br", "Bz", 0.385); # 4*0.32=1.28A, 0.385, pos 2.20
+}
+
+
+
+##---------------------------------------
+#Diagnostic
+#----------------------------------------
+
+
+#endt = 0.55e-8;  # for part 1, t based distance 1.24m 
+endt = 1.7e-8;  # for part 2
+
+#tout(-tlen/2, endt, tlen/30);
+tout(0, endt, tlen/30, "bend"); # for part 2
+
+outputvalue("wcs",1);
+
+#screen("wcs","I", 0, 1.28, 0.01) ; # for part 1, z based position 1.2m 
+#screen("bend","I", 0.1, 2.5, 0.005) ; #for part 2
+screen("bend","I", 0.1, 2.5, 0.005, "bend") ; #for part 2
+#screen("bend","I", 2.4) ; #for scan
+
+tmax=endt;
+
+
