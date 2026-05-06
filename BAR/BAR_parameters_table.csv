@@ -1,5 +1,5 @@
 Parameter Name,Value
-Lattice File Name,BAR_V9.2-2026-04-21.lte
+Lattice File Name,BAR_V9.3-2026-05-06.lte
 Circumference [m],36.52062762827324
 RF frequency [MHz],98.50623413752368
 Revolution frequency [MHz],8.20885284479364
@@ -28,7 +28,10 @@ Dynamic ap. x [cm],7.82318115234375
 Dynamic ap. x' [mrad],7.257080078124997
 Dynamic ap. y [cm],6.768798828125
 Dynamic ap. y' [mrad],22.320556640624996
+Horizontal half-aperture [cm],4.0
+Vertical half-aperture [cm],2.0
 Lattice momentum acceptance [dp/p],0.06411132812499998
+Aperture-constrained momentum acceptance [dp/p],0.02622085993574609
 RF acceptance [dp/p],0.010864175149309699
 Tune x,2.41501852
 Tune y,1.45525778

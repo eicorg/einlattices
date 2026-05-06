@@ -1,6 +1,9 @@
 
 # Beam Accumulator Ring (BAR) Design Updates
 
+## V9.3 2026-05-06
+- Added ICTs and WCM 
+
 ## Change on 2026-04-30
 - Added ITL_parameters_table.csv and ETL_parameters_table.csv
 
