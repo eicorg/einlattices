@@ -1,0 +1,13 @@
+Parameter Name,Value
+Number of Quadrupoles,6.0
+Number of Dipoles,1.0
+Number of Correctors,3.0
+Number of BPMs,4.0
+D2 bend angle [rad],0.12175
+EQ1 B' [T/m],7.27605365
+EQ2 B' [T/m],-9.718430399999999
+EQ3 B' [T/m],12.050591218480003
+EQ4 B' [T/m],8.340309655701137
+EQ5 B' [T/m],-12.04054645
+EQ6 B' [T/m],11.703574349999998
+ESEPTUM angle [rad],-0.12

@@ -1,0 +1,79 @@
+!-------------------------------------------------------
+! Call files
+
+call, file = beam_pre_inj.bmad
+call, file = RCS_lattice.bmad
+
+!--------------------------------------------------------------------------------
+!LTR
+
+!ltr segments
+ltr_pip01: PIPE, L = 2.5
+ltr_pip02: PIPE, L = 1.5
+ltr_pip03: PIPE, L = 2.3
+ltr_pip04: PIPE, L = 0.3
+ltr_pip05: PIPE, L = 21.8
+ltr_pip06: PIPE, L = 0.3 !P2
+ltr_dump_pip: PIPE, L = 3.605158
+
+!elements
+ltr_qua00: Quadrupole, L = 0.30, aperture = 0.01816, aperture_type = Elliptical
+ltr_cor00: KICKER, L = 0.23
+ltr_cor00_s: KICKER, L = 0.11 !short corrector
+ltr_bpm00: MONITOR, L = 0.1
+
+!Markers
+ltr_mark_beg: MARKER
+ltr_mark_p1: MARKER
+ltr_mark_mid: MARKER, SUPERIMPOSE, REF = ltr_pip05, OFFSET=0, REF_ORIGIN=CENTER, ELE_ORIGIN=CENTER
+ltr_mark_p2: MARKER
+
+
+
+!ltr quads
+ltr_qua01: ltr_qua00, K1 =  4.361973027, superimpose, ref = ltr_pip01, offset=0.2, ref_origin=beginning, ele_origin=beginning	!
+ltr_qua02: ltr_qua00, K1 =  -1.587890151, superimpose, ref = ltr_pip01, offset=0.7, ref_origin=beginning, ele_origin=beginning	!
+ltr_qua03: ltr_qua00, K1 =  -0.6530219039, superimpose, ref = ltr_pip01, offset=1.5, ref_origin=beginning, ele_origin=beginning	!
+ltr_qua04: ltr_qua00, K1 =  -2.570812373, superimpose, ref = ltr_pip01, offset=2.0, ref_origin=beginning, ele_origin=beginning	!
+ltr_qua05: ltr_qua00, K1 = 1.290598591, superimpose, ref = ltr_pip02, offset=0.2, ref_origin=beginning, ele_origin=beginning	!
+ltr_qua06: ltr_qua00, K1 = 3.259656151, superimpose, ref = ltr_pip02, offset=1.0, ref_origin=beginning, ele_origin=beginning	!
+ltr_qua07: ltr_qua00, K1 = -4.953182883, superimpose, ref = ltr_pip03, offset=0.2, ref_origin=beginning, ele_origin=beginning
+ltr_qua08: ltr_qua00, K1 = 3.561972165, superimpose, ref = ltr_pip03, offset=0.7, ref_origin=beginning, ele_origin=beginning
+ltr_qua09: ltr_qua00, K1 = -3.468785164, superimpose, ref = ltr_pip03, offset=1.5, ref_origin=beginning, ele_origin=beginning
+ltr_qua10: ltr_qua00, K1 = 4.116425185, superimpose, ref = ltr_pip03, offset=2.0, ref_origin=beginning, ele_origin=beginning
+!dump quads
+ltr_dump_qua01: ltr_qua00, K1 = 0.4730502544, superimpose, ref = ltr_dump_pip, offset=1.15, ref_origin=beginning, ele_origin=beginning
+ltr_dump_qua02: ltr_qua00, K1 = -4.62270334, superimpose, ref = ltr_dump_pip, offset=1.65, ref_origin=beginning, ele_origin=beginning
+ltr_dump_qua03: ltr_qua00, K1 = 5.963940341, superimpose, ref = ltr_dump_pip, offset=2.15, ref_origin=beginning, ele_origin=beginning
+
+!ltr corr
+ltr_cor01: ltr_cor00, superimpose, ref = ltr_pip01, offset=1.0+0.06, ref_origin=beginning, ele_origin=beginning
+ltr_cor02: ltr_cor00, superimpose, ref = ltr_pip02, offset=0.5+0.06, ref_origin=beginning, ele_origin=beginning
+ltr_cor03: ltr_cor00, superimpose, ref = ltr_pip03, offset=1.0+0.06, ref_origin=beginning, ele_origin=beginning
+ltr_cor04: ltr_cor00, superimpose, ref = ltr_pip05, offset=1.0+0.06, ref_origin=beginning, ele_origin=beginning
+ltr_cor05: ltr_cor00, superimpose, ref = ltr_pip05, offset=20.3+0.06, ref_origin=beginning, ele_origin=beginning
+
+
+!ltr bpm
+ltr_bpm01: ltr_bpm00, superimpose, ref = ltr_pip01, offset=1.0+0.06+0.28, ref_origin=beginning, ele_origin=beginning
+ltr_bpm02: ltr_bpm00, superimpose, ref = ltr_pip02, offset=0.5+0.06+0.28, ref_origin=beginning, ele_origin=beginning
+ltr_bpm03: ltr_bpm00, superimpose, ref = ltr_pip03, offset=1.0+0.06+0.28, ref_origin=beginning, ele_origin=beginning
+ltr_bpm04: ltr_bpm00, superimpose, ref = ltr_pip05, offset=1.0+0.06+0.28, ref_origin=beginning, ele_origin=beginning
+ltr_bpm05: ltr_bpm00, superimpose, ref = ltr_pip05, offset=10.85, ref_origin=beginning, ele_origin=beginning
+ltr_bpm06: ltr_bpm00, superimpose, ref = ltr_pip05, offset=20.3+0.06+0.28, ref_origin=beginning, ele_origin=beginning
+ltr_dump_bpm01: ltr_bpm00, superimpose, ref = ltr_dump_pip, offset=3.4, ref_origin=beginning, ele_origin=beginning
+
+!ltr dipoles
+ltr_dip01: RBEND, L = 0.4, ANGLE = 0.07
+ltr_dip02: RBEND, L = 0.4, ANGLE = -0.07
+ltr_dip03: RBEND, L = 0.8, ANGLE = 0.37, ref_tilt=pi/2
+
+
+section_1: LINE = ( ltr_mark_beg, ltr_pip01, ltr_dip01, ltr_pip02, ltr_dip02, ltr_pip03, ltr_pip04, ltr_mark_p1 ) !preinjector to P1
+section_2: LINE = ( ltr_pip05 )	!P1 to P2
+section_dump: LINE = (ltr_mark_p2, ltr_pip06, ltr_dip03, ltr_dump_pip) ! to the dump!!!
+
+
+LTR_DUMP: line = ( section_1, section_2, section_dump )
+
+use, LTR_DUMP
