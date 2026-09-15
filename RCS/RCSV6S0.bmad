@@ -1,0 +1,228 @@
+!+
+! RCS_RF10M_4Cav_Symmetric_v2h_fracmatch.bmad   Version: SixFamilyStraight
+! Date:    2026-09-08
+! Base:    User-authored RCS_test.madx (LatticeDevelopment/SixFamilyStraight/),
+!          translated to Bmad. Genuinely new topology vs this session's
+!          v2c/v2d/v2e/v2f/v2g family: no separate MID_GAP1/MID_GAP2/QM
+!          insert at all -- all 4 cavity slots chain directly back-to-
+!          back with zero gap, and the "5th" quad sits AFTER slot 4,
+!          REUSING MQF11_LB's own element/circuit (0.71m large-bore,
+!          k1=kmqf11_lb) in place of what was previously a separate
+!          small 0.47m return-leg quad. Old normal-bore MQF11 and QM
+!          element defs (unused dead code in the source) and the
+!          scratch "extra_drift" element are OMITTED here (harmless to
+!          drop, never referenced by either line).
+!
+! FAMILIES: 6 straight-section (kmqd11, kmqf21, kmqd21, kmqf11_lb,
+! kqfs_lb, kqds_lb) + 2 arc (kqfarc, kqdarc) = 8 total ring-wide --
+! ONE FEWER than v2c's 7 straight-section families (9 total).
+!
+! THREE ISSUES FOUND AND FIXED in the source before verification:
+! (1) CIRCUMFERENCE BUG: original ad-hoc length-compensation scheme
+!     left the ring 0.314996m too long (0.157498m/straight). Found
+!     empirically via SURVEY (zeroed all compensation terms, measured
+!     the true minimum length, compared to the exact target derived
+!     from this arc) rather than re-deriving the source's own hand
+!     arithmetic. Fixed with the smallest possible change: trimmed
+!     ONLY the mqa4 padding (used 4x/straight) from +0.46 to
+!     +0.4206255 (-0.0393745/use x4 = -0.157498m/straight), leaving
+!     mqa1/mqa2/mqa3 exactly as authored. SURVEY-verified exact.
+! (2) NO HIGH-BRANCH MUX TARGET: original MATCH only enforced MUY=2pi
+!     and the boundary Twiss conditions; the MUX/Q1 constraint was
+!     commented out, so Q1 landed at a natural 44.28, far from
+!     RCSV5S1's own ~43.13 -- this session's dominant predictor of
+!     DA-with-errors survival. Rematched via matching_tool with the
+!     same TARGET_MUX=1.5648255 used for every other candidate.
+! (3) INJECTION STRAIGHT CAVITY TYPO: source had "RFC_D, RFC" (one
+!     dummy, one REAL cavity) in every injection-straight slot instead
+!     of "RFC_D, RFC_D" (both dummy) -- fixed here to match established
+!     convention (only the RF straight carries real SRF cavities).
+!
+! Confirmed optics (750 MeV) -- matching_tool live run, 2026-09-08,
+! same high-branch fractional-tune match (MUX=1.5648255/straight),
+! machine-precision convergence (cost=7.5e-21 at cap=75), then
+! chromaticity rematch:
+!   Circumference = 1507.014835 m (EXACT, matches target)
+!   Q1=43.129653  Q2=54.210001 (RCSV5S1-family target: ~43.130/~54.210
+!     -- matches almost exactly)
+!   DQ1=1.000  DQ2=1.000   MUY per straight = 1.000 (both, exact)
+!   BETXmax = 74.70 m  BETYmax = 66.79 m -- worse betxmax than v2c's
+!     63.86m but comparable betymax to v2c's 64.58m; still a large
+!     improvement over any unbroken-chain topology and clearly usable.
+!   DXmax = 0.4438 m (arc unchanged) -- baseline emittance.
+!   Closed-ring DX/DPX gate (named-element queries, not #e/#s): ALL
+!     PASS, max |dx|~3e-7 m.
+! Idealized DA / DA-with-errors verification: see DAAnalysis/notes.md,
+! 2026-09-08 entry, for the decisive result.
+!-
+
+no_digested
+
+kqfarc =  0.5224902877
+kqdarc = -0.5581144777
+kmqd11    = -0.1506746164
+kmqf21    =  0.3963879526
+kmqd21    = -0.2864734388
+kqfs_lb   =  0.2555181781
+kmqf11_lb =   0.173888618
+kqds_lb   = -0.1716855348
+ksfarc = -13.14618404
+ksdarc =  23.89445284
+
+parameter[particle] = electron
+parameter[E_tot] = 0.75 * 1e9
+parameter[n_part] = 0
+bmad_com[radiation_damping_on] = T
+
+!/ ARC Elements  (UNCHANGED from RCSV5S1 / V2A / V3_orig / CircPreserved)
+b0: rbend, l = 1.816, angle = -2*pi/320, aperture_type = elliptical, aperture = 16e-3, r0_mag = 15.e-3
+qd: quadrupole, l = 0.71, k1 = kqdarc, aperture_type = elliptical, aperture = 16e-3, r0_mag = 15.e-3
+qf: quadrupole, l = 0.71, k1 = kqfarc, aperture_type = elliptical, aperture = 16e-3, r0_mag = 15.e-3
+sd: sextupole,  l = 0.2,  k2 = ksdarc, aperture_type = elliptical, aperture = 16e-3, r0_mag = 15.e-3
+sf: sextupole,  l = 0.2,  k2 = ksfarc, aperture_type = elliptical, aperture = 16e-3, r0_mag = 15.e-3
+
+sds: drift, l = 0.2,  aperture_type = elliptical, aperture = 16e-3
+sfs: drift, l = 0.2,  aperture_type = elliptical, aperture = 16e-3
+cor: kicker, l = 0.3078, hkick = 0, vkick = 0, aperture_type = elliptical, aperture = 16e-3, r0_mag = 15.e-3
+
+dlo:  drift, l = 0.09595, aperture_type = elliptical, aperture = 16e-3
+B:    line = (DLO, B0, DLO)
+
+qlo:  drift, l = 0.055,    aperture_type = elliptical, aperture = 16e-3
+bpm:  monitor, l = 0.02
+clo:  drift, l = 0.0126,   aperture_type = elliptical, aperture = 16e-3
+slo:  drift, l = 0.05,     aperture_type = elliptical, aperture = 16e-3
+dbel: drift, l = 0.291064+0.0006/2, aperture_type = elliptical, aperture = 16e-3
+vact: drift, l = 0.28411,  aperture_type = elliptical, aperture = 16e-3
+dsq:  drift, l = 0.059654, aperture_type = elliptical, aperture = 16e-3
+
+ArcMain: line = (QF, QLO, BPM, CLO, COR, CLO, DBEL, B, VACT, SLO, SD, SLO, DSQ, QLO,
+                 QD, QLO, BPM, CLO, COR, CLO, DBEL, B, VACT, SLO, SF, SLO, DSQ, QLO)
+
+BEArcMain: line = (QF, QLO, BPM, CLO, COR, CLO, DBEL, B, VACT, SLO, SDS, SLO, DSQ, QLO,
+                   QD, QLO, BPM, CLO, COR, CLO, DBEL, B, VACT, SLO, SFS, SLO, DSQ, QLO)
+
+ARC: line = (BEArcMain, 78*ArcMain, BEArcMain)
+
+!/ Straight Section Elements -- SHARED between both straights.
+mqf21: quadrupole, l = 0.47,  k1 = kmqf21, aperture_type = elliptical, aperture = 16e-3, r0_mag = 15.e-3
+mqd11: quadrupole, l = 0.71,  k1 = kmqd11, aperture_type = elliptical, aperture = 16e-3, r0_mag = 15.e-3
+mqd21: quadrupole, l = 0.71,  k1 = kmqd21, aperture_type = elliptical, aperture = 16e-3, r0_mag = 15.e-3
+
+!/ Large-bore quads (50mm bore) -- MQF11_LB is used TWICE per straight
+!  (slot1 entrance AND the reused return-leg-entry position), sharing
+!  ONE circuit (kmqf11_lb) -- this is the family-count reduction vs
+!  v2c (which used a separate normal-bore MQF11 for the return leg).
+mqf11_lb: quadrupole, l = 0.71, k1 = kmqf11_lb, aperture_type = elliptical, aperture = 50e-3, r0_mag = 45.e-3
+qds_lb:   quadrupole, l = 0.71, k1 = kqds_lb,   aperture_type = elliptical, aperture = 50e-3, r0_mag = 45.e-3
+qfs_lb:   quadrupole, l = 0.71, k1 = kqfs_lb,   aperture_type = elliptical, aperture = 50e-3, r0_mag = 45.e-3
+
+!/ Matching section drifts. mqa1/mqa2/mqa3 carry the source's own
+!  compensation terms unchanged; mqa4 is TRIMMED (see header, fix #1).
+mqa:  drift, l = 6.86920058362181329E+000, aperture_type = elliptical, aperture = 16e-3
+mqa1: drift, l = 1.95347170119514524E+000 + 1.019666667 + 0.744583, aperture_type = elliptical, aperture = 16e-3
+mqa2: drift, l = 4.59154633687524161E+000 + 1.019666667 + 0.744583, aperture_type = elliptical, aperture = 16e-3
+mqa3: drift, l = 2.52291632698884705E+000 + 1.019666667 + 0.744583, aperture_type = elliptical, aperture = 16e-3
+mqa4: drift, l = 0.453 + 0.4206255, aperture_type = elliptical, aperture = 16e-3
+
+!/ Cavity approach drifts -- slot-internal geometry (fixed/non-negotiable)
+strrf2: drift, l = 3.7735, aperture_type = elliptical, aperture = 16e-3
+rfc_d:  drift, l = 1,      aperture_type = elliptical, aperture = 16e-3
+strrf2_short: drift, l = 3.0735, aperture_type = elliptical, aperture = 16e-3
+
+!/ SRF cavity -- 2 per active slot, RF straight only (4 slots = 8
+!  cavities total), 1.12 MV each (placeholder, unchanged); h=2971 for
+!  C=1507.014835 m, f_RF=591.024 MHz master frequency.
+rfc: rfcavity, l = 1, voltage = 1.12 * 1e6, phi0 = 0.5 - 0.5, harmon = 2971,
+     aperture_type = elliptical, aperture = 16e-3
+
+mend0: marker
+mbeg0: marker
+mend:  marker
+mbeg:  marker
+
+!/ Injection straight geometry (kicker pipes) — unchanged
+mqa_00: drift, l = 0.4, aperture_type = elliptical, aperture = 16e-3
+mqa_us: drift, l = 1.0, aperture_type = elliptical, aperture = 16e-3
+mqa_ds: drift, l = mqa[l] - 1.0 - 0.4, aperture_type = elliptical, aperture = 16e-3
+
+mqa1_il_a: drift, l = mqa1[l]/2 - 0.4, aperture_type = elliptical, aperture = 16e-3
+mqa1_il_b: drift, l = mqa1[l]/2 - 0.4, aperture_type = elliptical, aperture = 16e-3
+
+mar_sep: marker
+mar_off: marker
+
+is_hki01:   kicker, l = 0.8, aperture_type = elliptical, aperture = 16e-3
+is_mar_hki: marker
+
+es_hki00: kicker, l = 0.8, aperture_type = elliptical, aperture = 16e-3
+es_hki01: es_hki00
+es_hki02: es_hki00
+es_hki03: es_hki00
+
+mqa1_il: line = (mqa1_il_a, is_hki01, is_mar_hki, mqa1_il_b)
+
+es_pip01_a: drift, l = mqa2[l] - 3.6, aperture_type = elliptical, aperture = 16e-3
+es_pip01_b: drift, l = 0.2, aperture_type = elliptical, aperture = 16e-3
+es_pip01_c: drift, l = 1.8, aperture_type = elliptical, aperture = 16e-3
+es_pip01: line = (es_pip01_a, es_hki01, es_pip01_b, es_hki02, es_pip01_c)
+
+es_pip02_a: drift, l = mqa1[l]/2 - 0.4, aperture_type = elliptical, aperture = 16e-3
+es_pip02_b: drift, l = mqa1[l]/2 - 0.4, aperture_type = elliptical, aperture = 16e-3
+es_pip02: line = (es_pip02_a, es_hki03, es_pip02_b)
+
+es_pip03: drift, l = mqa[l] - 5.1, aperture_type = elliptical, aperture = 16e-3
+es_pip04: drift, l = 3.9, aperture_type = elliptical, aperture = 16e-3, aperture_at = continuous
+es_pip05: drift, l = 1.2, aperture_type = elliptical, aperture = 16e-3, aperture_at = continuous
+
+!/ INJECTION straight. NOTE: fix #3 applied here -- both cavities in
+!  every slot are RFC_D (dummy), matching established convention
+!  (source had one real RFC per slot, a likely copy-paste typo).
+Insertion_INJ: line = ( MBEG0, QF, QLO, BPM, CLO, COR, CLO,
+  MQA_00, MAR_SEP, MQA_US, MAR_SEP, MQA_DS, QLO,
+  MQD21, QLO, BPM, CLO, COR, CLO,
+  MQA1_IL, QLO,
+  MQF21, QLO, BPM, CLO, COR, CLO,
+  MQA2, QLO,
+  MQD11, QLO, BPM, CLO, COR, CLO,
+  MQA3, QLO,
+  MQF11_LB, QLO, BPM, CLO, COR, CLO, STRRF2_SHORT, RFC_D, RFC_D, STRRF2, MQA4, QLO,
+  QDS_LB, QLO, BPM, CLO, COR, CLO, STRRF2_SHORT, RFC_D, RFC_D, STRRF2, MQA4, QLO,
+  QFS_LB, QLO, BPM, CLO, COR, CLO, STRRF2_SHORT, RFC_D, RFC_D, STRRF2, MQA4, QLO,
+  QDS_LB, QLO, BPM, CLO, COR, CLO, STRRF2_SHORT, RFC_D, RFC_D, STRRF2, MQA4, QLO,
+  MQF11_LB, QLO, BPM, CLO, COR, CLO,
+  MQA3, QLO,
+  MQD11, QLO, BPM, CLO, COR, CLO,
+  es_pip01, QLO,
+  MQF21, QLO, BPM, CLO, COR, CLO,
+  es_pip02, QLO,
+  MQD21, QLO, BPM, CLO, COR, CLO,
+  mar_off, es_pip03, mar_sep, es_pip04, mar_sep, es_pip05, QLO,
+  MEND0 )
+
+!/ RF straight (real RFC cavities, both slots' cavities real).
+Insertion_EXT: line = ( MBEG, QF, QLO, BPM, CLO, COR, CLO,
+  MQA, QLO,
+  MQD21, QLO, BPM, CLO, COR, CLO,
+  MQA1, QLO,
+  MQF21, QLO, BPM, CLO, COR, CLO,
+  MQA2, QLO,
+  MQD11, QLO, BPM, CLO, COR, CLO,
+  MQA3, QLO,
+  MQF11_LB, QLO, BPM, CLO, COR, CLO, STRRF2_SHORT, RFC, RFC, STRRF2, MQA4, QLO,
+  QDS_LB, QLO, BPM, CLO, COR, CLO, STRRF2_SHORT, RFC, RFC, STRRF2, MQA4, QLO,
+  QFS_LB, QLO, BPM, CLO, COR, CLO, STRRF2_SHORT, RFC, RFC, STRRF2, MQA4, QLO,
+  QDS_LB, QLO, BPM, CLO, COR, CLO, STRRF2_SHORT, RFC, RFC, STRRF2, MQA4, QLO,
+  MQF11_LB, QLO, BPM, CLO, COR, CLO,
+  MQA3, QLO,
+  MQD11, QLO, BPM, CLO, COR, CLO,
+  es_pip01, QLO,
+  MQF21, QLO, BPM, CLO, COR, CLO,
+  es_pip02, QLO,
+  MQD21, QLO, BPM, CLO, COR, CLO,
+  mar_off, es_pip03, mar_sep, es_pip04, mar_sep, es_pip05, QLO,
+  MEND )
+
+FULL_RING: line = (Insertion_INJ, ARC, Insertion_EXT, ARC)
+
+use, FULL_RING

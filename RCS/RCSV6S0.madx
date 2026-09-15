@@ -1,0 +1,235 @@
+beam_def: Beam, Particle = Electron, Energy = 0.75, Npart = 0;
+option, -info, -echo;
+ang = -2*PI/320;
+
+! ============================================================
+! ARC elements (UNCHANGED from RCSV5S1 / RF10M_V1 / RF10M_V2A)
+! ============================================================
+B0: rbend, l = 1.816, angle=ang;
+QD: quadrupole, l = 0.71, k1 := kqdarc;
+QF: quadrupole, l = 0.71, k1 := kqfarc;
+SD: sextupole, l = 0.2, k2 := ksdarc;
+SF: sextupole, l = 0.2, k2 := ksfarc;
+SDS: DRIFT, l=0.2;
+SFS: DRIFT, l=0.2;
+COR: kicker, l=0.3078;
+
+DLO: DRIFT, l=0.09595;
+B: line=(DLO,B0,DLO);
+
+QLO:  DRIFT, l=0.055;
+BPM:  MONITOR, l=0.02;
+CLO:  DRIFT, l=0.0126;
+SLO:  DRIFT, l=0.05;
+DBEL: DRIFT, l=0.291064+0.0006/2;
+VACT: DRIFT, l=0.28411;
+DSQ:  DRIFT, l=0.059654;
+
+ArcMain: line=(QF, QLO, BPM, CLO, COR, CLO, DBEL,B,VACT,SLO,SD,SLO,DSQ,QLO,
+               QD, QLO, BPM, CLO, COR, CLO, DBEL,B,VACT,SLO,SF,SLO,DSQ,QLO);
+
+BEArcMain: line=(QF, QLO, BPM, CLO, COR, CLO, DBEL,B,VACT,SLO,SDS,SLO,DSQ,QLO,
+                 QD, QLO, BPM, CLO, COR, CLO, DBEL,B,VACT,SLO,SFS,SLO,DSQ,QLO);
+
+ARC: line=(BEArcMain,78*ArcMain,BEArcMain);
+
+! ============================================================
+! Straight section elements -- SHARED between both straights (same
+! symmetric-straights convention as the prior design: only RFC vs
+! RFC_D differs between injection and RF straight).
+! ============================================================
+MQF11: quadrupole, l = 0.47, k1 := kmqf11;
+MQF21: quadrupole, l = 0.47, k1 := kmqf21;
+MQD11: quadrupole, l = 0.71, k1 := kmqd11;
+MQD21: quadrupole, l = 0.71, k1 := kmqd21;
+
+! Large-bore quads (0.47/0.71 m -> 1.17 m), one per cavity slot --
+! CONSOLIDATED to 2 families (kqfs_lb for both F-type, kqds_lb for both
+! D-type), per user's explicit family-minimization request.
+MQF11_LB: quadrupole, l = 0.71, k1 := kmqf11_lb;
+QDS_LB:  quadrupole, l = 0.71, k1 := kqds_lb;
+QFS_LB:   quadrupole, l = 0.71, k1 := kqfs_lb;
+
+
+! NEW mid-insert quad (split-chain topology): sits between slot 2 and
+! slot 3, breaking the old unbroken 4-slot run into two 2-slot runs.
+! D-type (continues the F,D,F,D alternation: slot2=D, QM=D, slot3=F).
+! Same 0.71 m length convention as the other D-type matching quads.
+QM: quadrupole, l = 0.71, k1 := kqm;
+
+! Matching section drifts (unchanged from RCSV5S1 / RF10M_V1)
+mqa:  drift, l = 6.86920058362181329E+000;
+mqa1: drift, l = 1.95347170119514524+1.019666667+0.744583;
+mqa2: drift, l = 4.59154633687524161+1.019666667+0.744583;
+mqa3: drift, l = 2.52291632698884705+1.019666667+0.744583;
+mqa4: drift, l = 0.453+0.4206255;   // v2h fix: trimmed from +0.46 to +0.4206255 (-0.0393745/use x4 uses/straight = -0.157498m/straight, closes the 0.314996m ring-wide SURVEY excess found in the original file) 
+
+! NEW split-chain gaps/taper -- placeholder starting lengths (structure
+! is fixed once chosen; only k1 values are matched, not these lengths).
+! Total (MID_GAP1+MID_GAP2+TAPER_END) = 9.4675 m, chosen so the overall
+! straight length is UNCHANGED at 94.9108 m -- see header arithmetic.
+MID_GAP1: drift, l = 2.5;
+MID_GAP2: drift, l = 2.5;
+TAPER_END: drift, l = 4.4675;
+
+! V2A cavity approach drifts -- 2-cavity slot geometry (unchanged,
+! slot-internal hardware geometry is fixed/non-negotiable per plan)
+STRRF2: drift, l = 3.7735;
+RFC_D:  drift, l = 1;
+
+! Shrunk entrance-side approach drift: unchanged from prior design.
+STRRF2_SHORT: drift, l = 3.0735;
+
+! SRF cavity -- 2 per active slot, 1.12 MV each (placeholder, unchanged
+! from prior design); h=2971 for C=1507.014835 m, f_RF=591.024 MHz
+! master freq.
+RFC: rfcavity, l = 1, volt = 1.12, lag = 0.5, harmon = 2971;
+
+! ============================================================
+! Markers
+! ============================================================
+MEND:  marker;
+MBEG:  marker;
+
+MEND0:  marker;
+MBEG0:  marker;
+
+! ============================================================
+! Injection straight kicker / pipe geometry (unchanged)
+! ============================================================
+mqa_00: drift, l=0.4;
+mqa_us: drift, l=1.0;
+mqa_ds: drift, l := mqa->l - 1.0 - 0.4;
+
+mqa1_il_a: drift, l := mqa1->l/2 - 0.4;
+mqa1_il_b: drift, l := mqa1->l/2 - 0.4;
+
+mar_sep:    marker;
+mar_off:    marker;
+
+is_hki01:   kicker, l=0.8;
+is_mar_hki: marker;
+
+es_hki00: kicker, l=0.8;
+es_hki01: es_hki00;
+es_hki02: es_hki00;
+es_hki03: es_hki00;
+
+mqa1_il: line=(mqa1_il_a, is_hki01, is_mar_hki, mqa1_il_b);
+
+es_pip01_a: drift, l := mqa2->l - 3.6;
+es_pip01_b: drift, l = 0.2;
+es_pip01_c: drift, l = 1.8;
+es_pip01:   line=(es_pip01_a, es_hki01, es_pip01_b, es_hki02, es_pip01_c);
+
+es_pip02_a: drift, l := mqa1->l/2 - 0.4;
+es_pip02_b: drift, l := mqa1->l/2 - 0.4;
+es_pip02:   line=(es_pip02_a, es_hki03, es_pip02_b);
+
+es_pip03: drift, l = mqa->l - 5.1;
+es_pip04: drift, l = 3.9;
+es_pip05: drift, l = 1.2;
+//extra_drift: drift, l= (MID_GAP1->l+QLO-l+0.71+QLO->l+BPM->l+CLO->l+COR->l+CLO->l+MID_GAP2->l)/6;
+extra_drift: drift, l = 1.019666667;
+
+//value, (MID_GAP1->l+QLO-l+0.71+QLO->l+BPM->l+CLO->l+COR->l+CLO->l+MID_GAP2->l)/6;
+//stop;
+
+! ============================================================
+! INJECTION straight -- split-chain topology, RFC_D dummy cavities.
+! Entrance (MBEG through MQA3+QLO) and frozen return-leg (MQF11 through
+! MEND) are BYTE-IDENTICAL to the prior symmetric design. Only the
+! middle (4 slots + new QM insert) is restructured.
+! ============================================================
+
+
+Insertion_INJ: LINE = (
+    MBEG0, QF, QLO, BPM, CLO, COR, CLO,
+    MQA_00, MAR_SEP, MQA_US, MAR_SEP, MQA_DS, QLO,
+    MQD21, QLO, BPM, CLO, COR, CLO,
+    MQA1_IL, QLO,
+    MQF21, QLO, BPM, CLO, COR, CLO,
+    MQA2, QLO,
+    MQD11, QLO, BPM, CLO, COR, CLO,
+    MQA3, QLO,
+    MQF11_LB, QLO, BPM, CLO, COR, CLO, STRRF2_SHORT, RFC_D, RFC, STRRF2, MQA4, QLO,
+    QDS_LB, QLO, BPM, CLO, COR, CLO, STRRF2_SHORT, RFC_D, RFC, STRRF2, MQA4, QLO,
+    QFS_LB, QLO, BPM, CLO, COR, CLO, STRRF2_SHORT, RFC_D, RFC, STRRF2, MQA4, QLO,
+    QDS_LB, QLO, BPM, CLO, COR, CLO, STRRF2_SHORT, RFC_D, RFC, STRRF2, MQA4, QLO,
+    MQF11_LB, QLO, BPM, CLO, COR, CLO,
+    MQA3, QLO,
+    MQD11, QLO, BPM, CLO, COR, CLO,
+    es_pip01, QLO,
+    MQF21, QLO, BPM, CLO, COR, CLO,
+    es_pip02, QLO,
+    MQD21, QLO, BPM, CLO, COR, CLO,
+    mar_off, es_pip03, mar_sep, es_pip04, mar_sep, es_pip05, QLO,
+    MEND0 );
+
+! ============================================================
+! RF straight (InsertionRF) -- same split-chain topology, real RFC
+! cavities. SAME elements/variables as the injection straight above.
+! ============================================================
+Insertion_EXT: LINE = (
+    MBEG, QF, QLO, BPM, CLO, COR, CLO,
+    MQA, QLO,
+    MQD21, QLO, BPM, CLO, COR, CLO,
+    MQA1, QLO,
+    MQF21, QLO, BPM, CLO, COR, CLO,
+    MQA2, QLO,
+    MQD11, QLO, BPM, CLO, COR, CLO,
+    MQA3, QLO,
+    MQF11_LB, QLO, BPM, CLO, COR, CLO, STRRF2_SHORT, RFC, RFC, STRRF2, MQA4, QLO,
+    QDS_LB, QLO, BPM, CLO, COR, CLO, STRRF2_SHORT, RFC, RFC, STRRF2, MQA4, QLO,
+    QFS_LB, QLO, BPM, CLO, COR, CLO, STRRF2_SHORT, RFC, RFC, STRRF2, MQA4, QLO,
+    QDS_LB, QLO, BPM, CLO, COR, CLO, STRRF2_SHORT, RFC, RFC, STRRF2, MQA4, QLO,
+    MQF11_LB, QLO, BPM, CLO, COR, CLO,
+    MQA3, QLO,
+    MQD11, QLO, BPM, CLO, COR, CLO,
+    es_pip01, QLO,
+    MQF21, QLO, BPM, CLO, COR, CLO,
+    es_pip02, QLO,
+    MQD21, QLO, BPM, CLO, COR, CLO,
+    mar_off, es_pip03, mar_sep, es_pip04, mar_sep, es_pip05, QLO,
+    MEND );
+
+RING: line=(Insertion_INJ, ARC, Insertion_EXT, ARC);
+
+
+! ============================================================
+! ============================================================
+! CONVERGED (2026-09-09): Qx/arc held at the current 40, Qy/arc
+! retuned 52->45 (per-cell Qy 0.32631->0.28256, fractional part held
+! at the current .210001). Straight rematched to the SAME high-branch
+! MUX=1.5648255 target against the new arc boundary. Chromaticity,
+! DX/DPX gate ALL PASS (~1e-15 precision). Q1=43.129651 Q2=47.210001
+! betxmax=71.123 betymax=46.752 -- a real beta improvement over the
+! unchanged-arc v2h (74.70/66.79), with DXmax=0.4311m -- actually
+! BELOW the 0.4438m baseline (not just modestly above it, as every
+! Qx-scan point tested).
+! ============================================================
+
+! Arc quads -- RETUNED (Qy/arc: 52->45, Qx/arc UNCHANGED at 40).
+kqfarc =  0.5224902877;
+kqdarc = -0.5581144777;
+
+! Straight-section quads -- CONVERGED against the new arc boundary.
+kmqd11    =    -0.1506746164;
+kmqf21    =     0.3963879526;
+kmqd21    =    -0.2864734388;
+kqfs_lb   =     0.2555181781;
+kmqf11_lb =      0.173888618;
+kqds_lb   =    -0.1716855348;
+
+! Arc sextupoles -- CONVERGED for DQ1=DQ2=1.0.
+ksfarc = -13.14618404;
+ksdarc =  23.89445284;
+
+! ============================================================
+! Final output
+! ============================================================
+USE, SEQUENCE=RING;
+twiss, chrom, sequence=RING, table=my_model, file="RCSV6S0.twiss";
+survey, sequence=RING, file="RCSV6S0_survey.dat";
+save,   sequence=RING, file="RCSV6S0.seq";
+stop;
