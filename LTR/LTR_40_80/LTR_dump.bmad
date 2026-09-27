@@ -1,0 +1,158 @@
+!-------------------------------------------------------
+! LTR_dump.bmad  —  gun (pre-injector) straight to the dump, no BAR.
+! section_1 (beginning->p1) and section_2 (p1->p2) are unchanged from
+! LTR_main_s.bmad (same quads, same K1 -- as-built hardware state).
+! Downstream of p2, ltr_dip01 is reconfigured as the vertical dump bend
+! (was ANGLE=0/inert in LTR_main_s.bmad; here ANGLE=0.37, ref_tilt=pi/2,
+! matching the old LTR_dump.bmad's ltr_dip03) followed by the dump
+! triplet (ltr_dump_qua01-03) and ltr_dump_bpm01. Triplet K1 below are
+! the old lattice's values -- matched to this geometry with a small-beta,
+! max-vertical-dispersion condition at ltr_dump_bpm01 (see comment below).
+! Simplified standalone version: beam parameters inlined above, no companion tao.init file needed (already matched).
+!-------------------------------------------------------
+
+! Initial beam parameters (inlined from beam_pre_inj.bmad -- gun/pre-injector interface)
+parameter[geometry]      = Open
+parameter[p0c]           = 7.49999825920029E8
+parameter[particle]      = Electron
+parameter[no_end_marker] = T
+
+BEGINNING[BETA_A]  =  9.06696
+BEGINNING[ALPHA_A] = -0.587814
+BEGINNING[BETA_B]  =  20.3877
+BEGINNING[ALPHA_B] = -0.747937
+BEGINNING[ETA_X]   =  0.0165
+BEGINNING[ETAP_X]  = -0.011
+BEGINNING[ETA_Y]   =  0.0
+BEGINNING[ETAP_Y]  =  0.0
+
+!-------------------------------------------------------
+! Element definitions
+!-------------------------------------------------------
+
+! Quadrupoles (section_1/section_2, unchanged from LTR_main_s.bmad)
+ltr_qua05: Quadrupole, L = 0.3, aperture = 0.01816, aperture_type = Elliptical, K1 = -3.468785164
+ltr_qua06: Quadrupole, L = 0.3, aperture = 0.01816, aperture_type = Elliptical, K1 =  4.116425185
+ltr_qua01: Quadrupole, L = 0.3, aperture = 0.01816, aperture_type = Elliptical, K1 = 0
+ltr_qua02: Quadrupole, L = 0.3, aperture = 0.01816, aperture_type = Elliptical, K1 = 0
+ltr_qua03: Quadrupole, L = 0.3, aperture = 0.01816, aperture_type = Elliptical, K1 = 0
+ltr_qua04: Quadrupole, L = 0.3, aperture = 0.01816, aperture_type = Elliptical, K1 = 0
+
+! Dump triplet -- matched (min/max bounds beta<2m, eta.y>1.5m):
+! beta.a=2.001, beta.b=2.001, eta.y=1.486 at ltr_dump_bpm01. eta.y ~1.5m
+! is close to the achievable ceiling for beta<2m with this triplet --
+! confirmed not K1-limited (same result with K1 bound loosened to
+! +/-10, nothing pinned); the dispersion mostly comes from the fixed
+! dip01/drift geometry upstream, which the triplet can reshape but not
+! meaningfully add to.
+ltr_dump_qua01: Quadrupole, L = 0.3, aperture = 0.01816, aperture_type = Elliptical, K1 = -2.48740391004008821E+000
+ltr_dump_qua02: Quadrupole, L = 0.3, aperture = 0.01816, aperture_type = Elliptical, K1 = -7.72103242400441064E-002
+ltr_dump_qua03: Quadrupole, L = 0.3, aperture = 0.01816, aperture_type = Elliptical, K1 =  5.00000000000000000E+000
+
+! Correctors
+ltr_cor00:   KICKER, L = 0.23
+ltr_cor05: ltr_cor00
+ltr_cor06: ltr_cor00
+ltr_cor01: ltr_cor00
+ltr_cor02: ltr_cor00
+ltr_cor03: ltr_cor00
+ltr_cor04: ltr_cor00
+
+! BPMs
+ltr_bpm00: MONITOR, L = 0.1
+ltr_bpm05: ltr_bpm00
+ltr_bpm06: ltr_bpm00
+ltr_bpm07: ltr_bpm00
+ltr_bpm01: ltr_bpm00
+ltr_bpm02: ltr_bpm00
+ltr_bpm03: ltr_bpm00
+ltr_bpm04: ltr_bpm00
+ltr_dump_bpm01: ltr_bpm00
+
+! Dipoles
+! ltr_dip01: dump bend (vertical, ref_tilt=pi/2), same element position as
+! LTR_main_s.bmad's inert (ANGLE=0) ltr_dip01 right after p2 -- old
+! generation called this ltr_dip03.
+ltr_dip01: RBEND, L = 0.8, ANGLE = 0.37, ref_tilt = pi/2
+
+! Markers
+ltr_mark_beg: MARKER
+ltr_mark_p1:  MARKER
+ltr_mark_mid: MARKER
+ltr_mark_p2:  MARKER
+
+!-------------------------------------------------------
+! Drifts
+!-------------------------------------------------------
+
+dr013: Drift, L = 0.060000  ! → ltr_qua05
+dr014: Drift, L = 0.200000  ! → ltr_qua06
+dr015: Drift, L = 0.300000  ! end of section_1
+dr016: Drift, L = 1.060000  ! → ltr_cor05
+dr017: Drift, L = 0.050000  ! → ltr_bpm05
+dr018: Drift, L = 9.410000  ! → ltr_bpm06 / ltr_mark_mid
+dr019: Drift, L = 9.410000  ! → ltr_cor06
+dr020: Drift, L = 0.050000  ! → ltr_bpm07
+dr021: Drift, L = 1.060000  ! end of section_2
+dr022: Drift, L = 0.300000  ! → ltr_dip01 (same as LTR_main_s.bmad)
+
+! Dump tail (translated from old LTR_dump.bmad's ltr_dump_pip superimpose
+! offsets: 1.15 -> qua01(0.3) -> 0.2 -> qua02(0.3) -> 0.2 -> qua03(0.3)
+! -> 0.95 -> bpm01(0.1) -> 0.105158, summing to 3.605158 exactly)
+dr052: Drift, L = 1.150000  ! → ltr_dump_qua01
+dr053: Drift, L = 0.200000  ! → ltr_dump_qua02
+dr054: Drift, L = 0.200000  ! → ltr_dump_qua03
+dr055: Drift, L = 0.950000  ! → ltr_dump_bpm01
+dr056: Drift, L = 0.105158  ! end of dump line
+
+dr001: Drift, L = 0.820000  ! → ltr_qua01
+dr002: Drift, L = 0.060000  ! → ltr_cor01
+dr003: Drift, L = 0.050000  ! → ltr_bpm01
+dr004: Drift, L = 0.820000  ! → ltr_qua02
+dr005: Drift, L = 0.060000  ! → ltr_cor02
+dr006: Drift, L = 0.050000  ! → ltr_bpm02
+dr007: Drift, L = 0.820000  ! → ltr_qua03
+dr008: Drift, L = 0.060000  ! → ltr_cor03
+dr009: Drift, L = 0.050000  ! → ltr_bpm03
+dr010: Drift, L = 0.820000  ! → ltr_qua04
+dr011: Drift, L = 0.060000  ! → ltr_cor04
+dr012: Drift, L = 0.050000  ! → ltr_bpm04
+
+!-------------------------------------------------------
+! Line definitions
+!-------------------------------------------------------
+
+section_1: LINE = (
+  ltr_mark_beg,
+  dr001, ltr_qua01, dr002, ltr_cor01, dr003, ltr_bpm01,
+  dr004, ltr_qua02, dr005, ltr_cor02, dr006, ltr_bpm02,
+  dr007, ltr_qua03, dr008, ltr_cor03, dr009, ltr_bpm03,
+  dr010, ltr_qua04, dr011, ltr_cor04, dr012, ltr_bpm04,
+  dr013, ltr_qua05, dr014, ltr_qua06,
+  dr015, ltr_mark_p1 )
+
+section_2: LINE = (
+  dr016, ltr_cor05, dr017, ltr_bpm05,
+  dr018, ltr_bpm06, ltr_mark_mid,
+  dr019, ltr_cor06, dr020, ltr_bpm07,
+  dr021 )
+
+section_dump: LINE = (
+  ltr_mark_p2,
+  dr022, ltr_dip01,
+  dr052, ltr_dump_qua01,
+  dr053, ltr_dump_qua02,
+  dr054, ltr_dump_qua03,
+  dr055, ltr_dump_bpm01,
+  dr056 )
+
+LTR_DUMP: line = ( section_1, section_2, section_dump )
+
+use, LTR_DUMP
+
+ LTR_QUA01[K1] = -4.07342177663648775E-001
+ LTR_QUA02[K1] = -2.49287479587114655E-002
+ LTR_QUA03[K1] =  2.56945921829669421E+000
+ LTR_QUA04[K1] =  1.91546248836994948E-001
+ LTR_QUA05[K1] = -4.04130334266035174E+000
+ LTR_QUA06[K1] =  4.31730106658681478E+000

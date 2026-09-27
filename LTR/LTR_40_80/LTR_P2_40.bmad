@@ -1,0 +1,243 @@
+!-------------------------------------------------------
+! LTR_P2_40.bmad  —  ltr_mark_p2 -> end of section_3 (end of dr034)
+! 40-cell RCS variant. Same elements as LTR_main_s.bmad's section_3;
+! BEGINNING here is the incoming Twiss AT ltr_mark_p2 (not the true
+! lattice beginning -- beam_pre_inj.bmad's BEGINNING values don't apply
+! to this sub-line and are overridden below). Dispersion not set/matched.
+! Quads ltr_qua07-11 matched to the 40-cell end-of-line target.
+! Simplified standalone version: beam parameters inlined above, no companion tao.init file needed (already matched).
+!-------------------------------------------------------
+
+! Reference particle parameters (inlined from beam_pre_inj.bmad). The
+! actual incoming Twiss at ltr_mark_p2 is set explicitly below -- it
+! overrides beam_pre_inj.bmad's BEGINNING, which applies to the true
+! lattice start, not this sub-line.
+parameter[geometry]      = Open
+parameter[p0c]           = 7.49999825920029E8
+parameter[particle]      = Electron
+parameter[no_end_marker] = T
+
+!-------------------------------------------------------
+! Element definitions
+!-------------------------------------------------------
+
+! Quadrupoles
+ltr_qua05: Quadrupole, L = 0.3, aperture = 0.01816, aperture_type = Elliptical, K1 = -3.468785164
+ltr_qua06: Quadrupole, L = 0.3, aperture = 0.01816, aperture_type = Elliptical, K1 =  4.116425185
+ltr_qua07: Quadrupole, L = 0.3, aperture = 0.01816, aperture_type = Elliptical, K1 =  1.56259112440267578E+000
+ltr_qua08: Quadrupole, L = 0.3, aperture = 0.01816, aperture_type = Elliptical, K1 = -1.64711094860694174E+000
+ltr_qua09: Quadrupole, L = 0.3, aperture = 0.01816, aperture_type = Elliptical, K1 =  1.08097002606758896E+000
+ltr_qua10: Quadrupole, L = 0.3, aperture = 0.01816, aperture_type = Elliptical, K1 = -4.92877439601905554E-001
+ltr_qua11: Quadrupole, L = 0.3, aperture = 0.01816, aperture_type = Elliptical, K1 = -6.33699106319200678E-001
+! Injection quads (larger aperture)
+ltr_qua12: Quadrupole, L = 0.3, aperture_type = elliptical, aperture = 18.16e-3, K1 = 1.59174291524363998E+000
+ltr_qua13: Quadrupole, L = 0.3, aperture_type = elliptical, aperture = 18.16e-3, K1 = -2.04810249251209697E+000
+ltr_qua14: Quadrupole, L = 0.3, aperture_type = elliptical, aperture = 18.16e-3, K1 = 1.10495435657233676E+000
+ltr_qua15: Quadrupole, L = 0.3, aperture_type = elliptical, aperture = 18.16e-3, K1 = 1.85857411374488635E-001
+! Equidistant replacement quads (not used in section_3)
+ltr_qua01: Quadrupole, L = 0.3, aperture = 0.01816, aperture_type = Elliptical, K1 = 0
+ltr_qua02: Quadrupole, L = 0.3, aperture = 0.01816, aperture_type = Elliptical, K1 = 0
+ltr_qua03: Quadrupole, L = 0.3, aperture = 0.01816, aperture_type = Elliptical, K1 = 0
+ltr_qua04: Quadrupole, L = 0.3, aperture = 0.01816, aperture_type = Elliptical, K1 = 0
+
+! Correctors
+ltr_cor00:   KICKER, L = 0.23
+ltr_cor00_s: KICKER, L = 0.11
+ltr_cor05: ltr_cor00
+ltr_cor06: ltr_cor00
+ltr_cor07: ltr_cor00
+ltr_cor08: ltr_cor00
+ltr_cor09: ltr_cor00
+ltr_cor10: ltr_cor00
+ltr_cor11: ltr_cor00
+ltr_cor12: ltr_cor00
+ltr_cor13: ltr_cor00_s
+ltr_cor01: ltr_cor00
+ltr_cor02: ltr_cor00
+ltr_cor03: ltr_cor00
+ltr_cor04: ltr_cor00
+
+! BPMs
+ltr_bpm00: MONITOR, L = 0.1
+ltr_bpm05: ltr_bpm00
+ltr_bpm06: ltr_bpm00
+ltr_bpm07: ltr_bpm00
+ltr_bpm08: ltr_bpm00
+ltr_bpm09: ltr_bpm00
+ltr_bpm10: ltr_bpm00
+ltr_bpm11: ltr_bpm00
+ltr_bpm12: ltr_bpm00
+ltr_bpm13: ltr_bpm00
+ltr_bpm14: ltr_bpm00
+ltr_bpm15: ltr_bpm00
+ltr_bpm16: ltr_bpm00
+ltr_bpm17: ltr_bpm00
+ltr_bpm01: ltr_bpm00
+ltr_bpm02: ltr_bpm00
+ltr_bpm03: ltr_bpm00
+ltr_bpm04: ltr_bpm00
+
+! Dipoles
+ltr_dip01: RBEND, L = 0.8
+
+! Penner merger SBENDs (controlled by O_MG overlay)
+ltr_dip02: SBEND, L = 0.8, aperture_type = elliptical, aperture = 18.16e-3
+ltr_dip03: SBEND, L = 0.8, aperture_type = elliptical, aperture = 18.16e-3
+ltr_dip04: SBEND, L = 0.8, aperture_type = elliptical, aperture = 18.16e-3
+
+! Markers
+ltr_mark_beg: MARKER
+ltr_mark_p1:  MARKER
+ltr_mark_mid: MARKER
+ltr_mark_p2:  MARKER
+
+! Injection patch
+ltr_pat01: patch, x_offset = -6.5E-3, x_pitch = 2.0E-3
+ltr_pat01[X_OFFSET] =  3.46300000000000000E-002  ! Not used in optimizing
+ltr_pat01[X_PITCH]  = -4.92431430885577337E-003  ! Not used in optimizing
+
+! Injection kicker
+
+!-------------------------------------------------------
+! Modified Penner bend merger overlay
+!-------------------------------------------------------
+
+O_MG: overlay = {
+  ltr_dip02[G]:  gg,
+  ltr_dip03[G]: -gg,
+  ltr_dip04[G]:  gg,
+  ltr_dip02[E1]: gg*0.8*0.5,
+  ltr_dip02[E2]: gg*0.8*0.5,
+  ltr_dip03[E1]: -0.5*gg*0.8,
+  ltr_dip03[E2]: -0.5*gg*0.8,
+  ltr_dip04[E1]: gg*0.8*0.5,
+  ltr_dip04[E2]: gg*0.8*0.5},
+  var = {gg},
+  gg = -1.90690761784588297E-001
+
+O_MG[GG] = 1.90221241088411402E-001  ! Fixed geometry, not an optimization variable
+
+!-------------------------------------------------------
+! Drifts
+!-------------------------------------------------------
+
+dr013: Drift, L = 0.060000  ! → ltr_qua05
+dr014: Drift, L = 0.200000  ! → ltr_qua06
+dr015: Drift, L = 0.300000  ! end of section_1
+dr016: Drift, L = 1.060000  ! → ltr_cor05
+dr017: Drift, L = 0.050000  ! → ltr_bpm05
+dr018: Drift, L = 9.410000  ! → ltr_bpm06 / ltr_mark_mid
+dr019: Drift, L = 9.410000  ! → ltr_cor06
+dr020: Drift, L = 0.050000  ! → ltr_bpm07
+dr021: Drift, L = 1.060000  ! end of section_2
+dr022: Drift, L = 0.300000  ! → ltr_dip01
+dr023: Drift, L = 3.060000  ! → ltr_cor07
+dr024: Drift, L = 0.050000  ! → ltr_bpm08
+dr025: Drift, L = 2.624000  ! → ltr_qua07
+dr026: Drift, L = 0.200000  ! → ltr_qua08
+dr027: Drift, L = 0.060000  ! → ltr_cor08
+dr028: Drift, L = 0.050000  ! → ltr_bpm09
+dr029: Drift, L = 12.280000 ! → ltr_bpm10
+dr030: Drift, L = 1.100000  ! → ltr_qua10
+dr031: Drift, L = 0.060000  ! → ltr_cor09
+dr032: Drift, L = 0.050000  ! → ltr_bpm11
+dr033: Drift, L = 0.660000  ! → ltr_qua11
+dr034: Drift, L = 0.200000  ! end of section_3
+dr035: Drift, L = 0.570000  ! → ltr_bpm12
+dr036: Drift, L = 0.050000  ! → ltr_cor10
+dr037: Drift, L = 0.050000  ! → ltr_dip02
+dr038: Drift, L = 0.050000  ! → ltr_bpm13
+dr039: Drift, L = 1.320000  ! → ltr_cor11
+dr040: Drift, L = 0.050000  ! → ltr_qua12
+dr041: Drift, L = 0.350000  ! → ltr_bpm14
+dr042: Drift, L = 0.350000  ! → ltr_qua13
+dr043: Drift, L = 0.350000  ! → ltr_dip03
+dr044: Drift, L = 0.028000  ! → ltr_bpm15
+dr045: Drift, L = 0.200000  ! → ltr_qua14
+dr046: Drift, L = 0.050000  ! → ltr_cor12
+dr047: Drift, L = 0.050000  ! → ltr_bpm16
+dr048: Drift, L = 0.106614  ! → ltr_qua15
+dr052: Drift, L = 0.001400  ! → ltr_cor13 (relocated)
+dr053: Drift, L = 0.110600  ! → ltr_qua14
+dr054: Drift, L = 1.613400  ! → ltr_bpm17
+dr051: Drift, L = 0.300000  ! → ltr_dip04
+
+! Equidistant quad pitch (0.82) with native cor/bpm spacing (0.06/0.05) per quad
+dr001: Drift, L = 0.820000  ! → ltr_qua01
+dr002: Drift, L = 0.060000  ! → ltr_cor01
+dr003: Drift, L = 0.050000  ! → ltr_bpm01
+dr004: Drift, L = 0.820000  ! → ltr_qua02
+dr005: Drift, L = 0.060000  ! → ltr_cor02
+dr006: Drift, L = 0.050000  ! → ltr_bpm02
+dr007: Drift, L = 0.820000  ! → ltr_qua03
+dr008: Drift, L = 0.060000  ! → ltr_cor03
+dr009: Drift, L = 0.050000  ! → ltr_bpm03
+dr010: Drift, L = 0.820000  ! → ltr_qua04
+dr011: Drift, L = 0.060000  ! → ltr_cor04
+dr012: Drift, L = 0.050000  ! → ltr_bpm04
+
+!-------------------------------------------------------
+! Line definitions
+!-------------------------------------------------------
+
+section_1: LINE = (
+  ltr_mark_beg,
+  dr001, ltr_qua01, dr002, ltr_cor01, dr003, ltr_bpm01,
+  dr004, ltr_qua02, dr005, ltr_cor02, dr006, ltr_bpm02,
+  dr007, ltr_qua03, dr008, ltr_cor03, dr009, ltr_bpm03,
+  dr010, ltr_qua04, dr011, ltr_cor04, dr012, ltr_bpm04,
+  dr013, ltr_qua05, dr014, ltr_qua06,
+  dr015, ltr_mark_p1 )
+
+section_2: LINE = (
+  dr016, ltr_cor05, dr017, ltr_bpm05,
+  dr018, ltr_bpm06, ltr_mark_mid,
+  dr019, ltr_cor06, dr020, ltr_bpm07,
+  dr021 )
+
+section_3: LINE = (
+  ltr_mark_p2,
+  dr022, ltr_dip01,
+  dr023, ltr_cor07, dr024, ltr_bpm08,
+  dr025, ltr_qua07, dr026, ltr_qua08,
+  dr027, ltr_cor08, dr028, ltr_bpm09,
+  dr029, ltr_bpm10, ltr_qua09,
+  dr030, ltr_qua10,
+  dr031, ltr_cor09, dr032, ltr_bpm11,
+  dr033, ltr_qua11, dr034 )
+
+section_4: LINE = (
+  dr035, ltr_bpm12, dr036, ltr_cor10,
+  dr037, ltr_dip02,
+  dr038, ltr_bpm13, dr039, ltr_cor11,
+  dr040, ltr_qua12, dr041, ltr_bpm14,
+  dr042, ltr_qua13,
+  dr043, ltr_dip03,
+  dr044, ltr_bpm15, dr052, ltr_cor13,
+  dr053, ltr_qua14,
+  dr046, ltr_cor12, dr047, ltr_bpm16,
+  dr048, ltr_qua15, dr054, ltr_bpm17, dr051, ltr_dip04,
+  ltr_pat01 )
+
+LTR_COMPLETE: line = ( section_1, section_2, section_3 )
+
+!-------------------------------------------------------
+! Incoming Twiss at ltr_mark_p2 (this line's BEGINNING).
+! Overrides beam_pre_inj.bmad's BEGINNING, which applies to the true
+! lattice start (ltr_mark_beg), not p2. Dispersion not set (0).
+!-------------------------------------------------------
+BEGINNING[BETA_A]  =  17.406
+BEGINNING[ALPHA_A] =  -2.225
+BEGINNING[BETA_B]  =  21.854
+BEGINNING[ALPHA_B] =  -1.065
+BEGINNING[ETA_X]   = 0.0
+BEGINNING[ETAP_X]  = 0.0
+BEGINNING[ETA_Y]   = 0.0
+BEGINNING[ETAP_Y]  = 0.0
+
+P2_COMPLETE: line = ( section_3, section_4 )
+
+use, P2_COMPLETE
+
+! Matched to the 40-cell end-of-line target: converged to machine
+! precision (merit 3.25e-25), no K1 limits binding.
