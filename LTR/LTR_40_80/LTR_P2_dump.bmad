@@ -1,0 +1,70 @@
+!-------------------------------------------------------
+! LTR_P2_dump.bmad  —  BAR to the dump (p2 -> dump only).
+! No 40/80-cell RCS variant here -- this line diverges before the point
+! where RCS cell count matters. Incoming Twiss at p2 is set directly from
+! beam_BAR.bmad (BAR interface values), not propagated from the gun.
+! Dump triplet K1 below are matched to this geometry with a small-beta,
+! max-vertical-dispersion condition at ltr_dump_bpm01 (see comment below).
+! Simplified standalone version: beam parameters inlined above, no companion tao.init file needed (already matched).
+!-------------------------------------------------------
+
+! Initial beam parameters (inlined from beam_BAR.bmad -- BAR interface)
+parameter[geometry]      = Open
+parameter[p0c]           = 7.49999825920029E8
+parameter[particle]      = Electron
+parameter[no_end_marker] = T
+
+BEGINNING[BETA_A]  =  16.2830230759
+BEGINNING[ALPHA_A] = -1.6292746245
+BEGINNING[BETA_B]  =  21.8544100000
+BEGINNING[ALPHA_B] = -1.0731900000
+BEGINNING[ETA_X]   =  0.0
+BEGINNING[ETAP_X]  =  0.0
+BEGINNING[ETA_Y]   =  0.0
+BEGINNING[ETAP_Y]  =  0.0
+
+!-------------------------------------------------------
+! Element definitions
+!-------------------------------------------------------
+
+! Dump triplet -- matched (min/max bounds beta<2m, eta.y>1.5m):
+! beta.a=0.767, beta.b=1.687, eta.y=1.500 at ltr_dump_bpm01. Same
+! ceiling as LTR_dump.bmad -- eta.y is set mostly by the fixed
+! dip01/drift geometry, not the triplet.
+ltr_dump_qua01: Quadrupole, L = 0.3, aperture = 0.01816, aperture_type = Elliptical, K1 = -2.30252230897218935E+000
+ltr_dump_qua02: Quadrupole, L = 0.3, aperture = 0.01816, aperture_type = Elliptical, K1 = -3.25506293708725192E-001
+ltr_dump_qua03: Quadrupole, L = 0.3, aperture = 0.01816, aperture_type = Elliptical, K1 =  5.00000000000000000E+000
+
+ltr_bpm00: MONITOR, L = 0.1
+ltr_dump_bpm01: ltr_bpm00
+
+! Dump bend (vertical, ref_tilt=pi/2) -- same as LTR_dump.bmad's ltr_dip01
+ltr_dip01: RBEND, L = 0.8, ANGLE = 0.37, ref_tilt = pi/2
+
+ltr_mark_p2: MARKER
+
+!-------------------------------------------------------
+! Drifts (same dump-tail geometry as LTR_dump.bmad)
+!-------------------------------------------------------
+
+dr022: Drift, L = 0.300000  ! → ltr_dip01
+dr052: Drift, L = 1.150000  ! → ltr_dump_qua01
+dr053: Drift, L = 0.200000  ! → ltr_dump_qua02
+dr054: Drift, L = 0.200000  ! → ltr_dump_qua03
+dr055: Drift, L = 0.950000  ! → ltr_dump_bpm01
+dr056: Drift, L = 0.105158  ! end of dump line
+
+!-------------------------------------------------------
+! Line definition
+!-------------------------------------------------------
+
+section_dump: LINE = (
+  ltr_mark_p2,
+  dr022, ltr_dip01,
+  dr052, ltr_dump_qua01,
+  dr053, ltr_dump_qua02,
+  dr054, ltr_dump_qua03,
+  dr055, ltr_dump_bpm01,
+  dr056 )
+
+use, section_dump
