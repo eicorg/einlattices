@@ -91,16 +91,17 @@ B:    line = (DLO, B0, DLO)
 qlo:  drift, l = 0.055,    aperture_type = elliptical, aperture = 16e-3
 bpm:  monitor, l = 0.02
 clo:  drift, l = 0.0126,   aperture_type = elliptical, aperture = 16e-3
+clob:  drift, l = 0.0126+0.05,   aperture_type = elliptical, aperture = 16e-3
 slo:  drift, l = 0.05,     aperture_type = elliptical, aperture = 16e-3
 dbel: drift, l = 0.291064+0.0006/2, aperture_type = elliptical, aperture = 16e-3
-vact: drift, l = 0.28411,  aperture_type = elliptical, aperture = 16e-3
-dsq:  drift, l = 0.059654, aperture_type = elliptical, aperture = 16e-3
+vact: drift, l = 0.28411-0.025,  aperture_type = elliptical, aperture = 16e-3
+dsq:  drift, l = 0.059654-0.025, aperture_type = elliptical, aperture = 16e-3
 
-ArcMain: line = (QF, QLO, BPM, CLO, COR, CLO, DBEL, B, VACT, SLO, SD, SLO, DSQ, QLO,
-                 QD, QLO, BPM, CLO, COR, CLO, DBEL, B, VACT, SLO, SF, SLO, DSQ, QLO)
+ArcMain: line = (QF, QLO, BPM, CLOB, COR, CLO, DBEL, B, VACT, SLO, SD, SLO, DSQ, QLO,
+                 QD, QLO, BPM, CLOB, COR, CLO, DBEL, B, VACT, SLO, SF, SLO, DSQ, QLO)
 
-BEArcMain: line = (QF, QLO, BPM, CLO, COR, CLO, DBEL, B, VACT, SLO, SDS, SLO, DSQ, QLO,
-                   QD, QLO, BPM, CLO, COR, CLO, DBEL, B, VACT, SLO, SFS, SLO, DSQ, QLO)
+BEArcMain: line = (QF, QLO, BPM, CLOB, COR, CLO, DBEL, B, VACT, SLO, SDS, SLO, DSQ, QLO,
+                   QD, QLO, BPM, CLOB, COR, CLO, DBEL, B, VACT, SLO, SFS, SLO, DSQ, QLO)
 
 ARC: line = (BEArcMain, 78*ArcMain, BEArcMain)
 
