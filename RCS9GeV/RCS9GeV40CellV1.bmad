@@ -24,7 +24,7 @@ lcav = 1.2
 ! Bmad lattice file: RCS_9GeV40Cell.bmad;
 
 parameter[particle] = electron
-parameter[E_tot] = 0.75 * 1e9
+parameter[E_tot] = 9 * 1e9
 parameter[n_part] = 0.00000000000000000e+000
 
 
@@ -154,7 +154,7 @@ rfc_d: drift, l = lcav, aperture =  1.6e-2, aperture_type = Elliptical
 
 mend: marker
 mbeg: marker
-rfc: rfcavity, l = lcav, voltage = 1.12e6, phi0 = 0.0, harmon= 2802, aperture =  1.6e-2, aperture_type = Elliptical
+rfc: rfcavity, l = lcav, voltage = 8.00e6, phi0 = 0.0, harmon = 2971, aperture =  1.6e-2, aperture_type = Elliptical
 end: marker
 mend0: marker
 mss: marker
