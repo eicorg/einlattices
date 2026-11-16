@@ -1,41 +1,49 @@
 # Publish the preinjector
 
-Run this from a terminal with Python 3, Git, and GitHub CLI (`gh`) installed.
-Sign in to GitHub CLI once with `gh auth login --hostname github.com`.
-The configured Git connection must also have permission to push to
-`eicorg/einlattices`.
+Use one working branch, `preinj`. It contains the complete repository, including
+other teams' files. Your changes belong in `Preinjector/`, `LTR/`, and `BAR/`.
+
+Run this with Python 3, Git, and GitHub CLI (`gh`) installed. Sign in once with
+`gh auth login --hostname github.com`; choose SSH to match the existing Git
+connection to `eicorg/einlattices`.
 
 ```sh
 cd "/Users/wange/Documents/Research/eRHIC injector/eRHIC baseline/Beamline/Lattice/Preinj/control"
-python3 publish_preinj.py -m "Update rr18 preinjector lattice"
+python3 publish_preinj.py -m "Update preinjector, LTR, and BAR lattices"
 ```
 
-The script must be saved in the `control` repository root, with `preinj`
-checked out. It also works when invoked by its full path from another folder.
+The script must be in the `control` repository root, with `preinj` checked out.
+It can also be invoked by its full path from another folder.
 
-1. Fetch the latest GitHub branches, then replace the tracked contents of local
-   `BAR` and `LTR` with `main`. Files removed from `main` are removed locally too.
-   The script stops before replacement if these folders have local edits or
-   non-temporary untracked files. A folder already matching `main` is accepted.
-2. Stage the entire control repository and commit its changes with the supplied
-   message. This includes Preinjector changes, BAR/LTR synchronization, and any
-   other local additions, edits, or deletions. Excel lock files (`~$*`) and
-   `.DS_Store` are excluded. An unchanged repository skips the commit.
-3. Push the complete `preinj` branch to GitHub with a normal push. The script
-   stops if GitHub has `preinj` commits missing locally; it never force-pushes.
-4. Prepare and push a separate `preinj-merge` review branch based on the latest
-   fetched `main`. It copies only `Preinjector/`, `publish_preinj.py`, and
-   `PUBLISH_PREINJ.md` from the published snapshot. Every other path remains as
-   it is on `main`, including `RCS`, `RTE`, `BAR`, and `LTR`. Open a pull request
-   from `preinj-merge` into `main`, or update the branch of an existing open
-   request and print its link. If the scoped files already match `main`, no
-   pull request is needed.
+1. Fetch GitHub's latest branches. Stop if GitHub `preinj` has commits missing
+   locally, or if local changes are outside your three folders and the publishing
+   files (`publish_preinj.py`, `PUBLISH_PREINJ.md`, and an optional `.gitignore`).
+2. Stage your changes and commit with the supplied `-m` message. Excel lock
+   files (`~$*`) and `.DS_Store` are excluded. Skip the commit if nothing changed.
+3. Merge the latest fetched `main` into `preinj`, preserving your committed
+   Preinjector/LTR/BAR edits and bringing in updates to all systems, including
+   RCS and RTE. Stop on conflicts so you can resolve them. Before pushing, check
+   that the branch has no differences from `main` outside your work scope.
+   Push the complete `preinj` branch with a normal push, never a force-push.
+4. Open a pull request directly from `preinj` into `main`, or print the link
+   to the existing open request, which the push has updated. Skip creating a
+   request if the branch contents already match `main`.
 
-The script leaves `preinj` checked out. Opening the pull request requests a
-merge; a reviewer still performs the merge on GitHub. No reviewer is assigned
-automatically. Other paths pushed to `preinj` are outside this pull request.
+BAR and LTR are merged with main rather than replaced, so your own edits in
+those folders are retained. RCS, RTE, and other teams' files stay in the branch.
+The script keeps `preinj` checked out and creates no extra review branch.
+A reviewer performs the actual merge into `main` on GitHub.
+
+If merging reports conflicts, edit the conflicted files to resolve them, stage
+the resolved paths with `git add`, and run `git commit` to finish the merge.
+Then rerun the publishing command. To cancel an in-progress merge, use
+`git merge --abort`; your earlier local work commit remains available.
+
+If the script reports differences outside your work scope, review those paths
+and restore them from `origin/main` as appropriate before rerunning. It never
+automatically discards those changes.
 
 Use `python3 publish_preinj.py --help` for usage. A failed command stops the
-workflow; completed local commits and remote pushes are retained. After fixing
-the reported issue, rerun the same command. Existing commits are not duplicated,
-and an existing open pull request is reused.
+workflow; completed commits and pushes remain. Rerunning skips unchanged commits
+and reuses an existing pull request. Existing pull-request titles and descriptions
+are preserved; `-m` supplies the title only when a new request is created.
