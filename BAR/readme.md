@@ -1,6 +1,31 @@
 
 # Beam Accumulator Ring (BAR) Design Updates
 
+## V9.6 2026-07-05
+- Updated the BAR lattice and survey files following Mike's requested component relocations.
+- Shifted BPMs, quadrupoles, correctors, flags, beam instrumentation, and other components to match the requested layout.
+- Added the dedicated RF BPM and relocated ICT02 to the RF straight.
+- For BPM02, Q04F, and Q09F, the implemented shifts differ slightly from the original requested values. These changes were adjusted to preserve the symmetry of the BAR lattice, since BPM and quadrupole locations are constrained by the lattice symmetry.
+- because the quadrupoles, kickers, and sextupoles moved, the quadrupoles and bend dipoles gradients changed slightly too, as well as kicker settings for injeciton-extraction
+- ITL and ETL had to be slightly retuned (some element locations might have changed) because the optics in the BAR ring changed and ITL and ETL had to be re-matched to the new BAR optics.
+- (small change on 2026-07-21) I moved the DCCT 30 cm upstream so that it's now 50 cm from the RF cavity.  
+
+## V9.5 2026-07-01
+- This is an updated lattice with pass methods like in Elegant for CSBEND, KQUAD, KSEXT, EKICKER, DRIFT elements
+- Fringe fields in dipole bends and in quadrupoles are also included now, using Elegant's methods
+- The quadrupoles required 10 fringe integrals for the fringe model, I used the results from Radia simulation for unchanged and re-machined MIT Bates quadrupoles
+- These methods are re-implemented in PyAT and match Elegant to machine precision
+- After this change the quadrupoles had to be retuned to go back to roughly the same optics functions.
+- Additionally the gradient in the dipole bends had to be adjusted, which means the gap slope in the dipole magnets had to be modified accordingly
+- Additionally, the WCM is removed now, because it became clear it would not be able to measure the bunch length, the bunch length is too short for existing wall current monitors.
+- Because of switching to Elegant's pass methods and fringe field models, only .lte file will be provided for the BAR ring going forward. MAD-X does not have equivalent pass methods and fringe models. In ITL and ETL, madx files will continue to be provided, at least for now. 
+
+## V9.4 2026-05-06
+- Included Flags, ICTs, and WCM in the ITL, ETL, BAR lattice files
+
+## V9.3 2026-05-06
+- Added ICTs and WCM 
+
 ## Change on 2026-04-30
 - Added ITL_parameters_table.csv and ETL_parameters_table.csv
 
